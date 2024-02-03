@@ -6,24 +6,23 @@ import java.util.HashMap;
 public class Assembler {
 
     public void assemble(String opCode, String remaining) {
+        // System.out.println("OpCode:" + opCode);
         String encodedOpCode = encodeOpCode(opCode,remaining);
         String encodedRemaining = encodeRemaining(opCode, remaining);
+        // System.out.println("encodedOpCode:" + encodedOpCode);
+        // System.out.println("encodedRemaining:" + encodedRemaining);
         String encodedInstruction = binToOctal(encodedOpCode + encodedRemaining);
         System.out.println(encodedInstruction);
     }
 
     private String encodeOpCode(String opCode, String remaining) {
         HashMap<String, String> opCodeMap = new HashMap<>();
+        opCodeMap.put("HLT", "000000");
         opCodeMap.put("LDR", "000001");
         opCodeMap.put("LDX", "101001");
         opCodeMap.put("LDA", "000011");
         opCodeMap.put("STX", "101010");
         opCodeMap.put("STR", "000010");
-        opCodeMap.put("JNE", "001011");
-        opCodeMap.put("JZ", "001010");
-        opCodeMap.put("JCC", "001100");
-        opCodeMap.put("AIR", "000110");
-        opCodeMap.put("JSR", "001110");
         opCodeMap.put("JNE", "001011");
         opCodeMap.put("JZ", "001010");
         opCodeMap.put("JCC", "001100");
@@ -45,7 +44,8 @@ public class Assembler {
         opCodeMap.put("NOT", "011001");
         opCodeMap.put("SRC", "011111");
         opCodeMap.put("RRC", "100000");
-        opCodeMap.put("TRAP", "100100");
+        opCodeMap.put("SETCCE", "100100");
+        opCodeMap.put("TRAP", "100101");
         opCodeMap.put("IN", "111101");
         opCodeMap.put("OUT", "111110");
         opCodeMap.put("FADD", "100001");
@@ -54,6 +54,7 @@ public class Assembler {
         opCodeMap.put("STFR", "110011");
         opCodeMap.put("VADD", "100110");
         opCodeMap.put("VSUB", "100111");
+
         //TODO We need to decide whether the LOC is first or last
         //opCodeMap.put("LOC", encodeLOC(remaining));
         //opCodeMap.put("DATA" , encodeData(remaining));
@@ -226,7 +227,7 @@ public class Assembler {
                 remainingBuilder.append(encodeAddress(splitted[3]));
             } else {
                 remainingBuilder.append("0");
-                remainingBuilder.append(encodeAddress(splitted[2]));
+                remainingBuilder.append(encodeAddress(splitted[1]));
             }
         } else if (opCode.equals("JNE")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
