@@ -9,23 +9,24 @@ public class Assembler {
         String encodedOpCode = encodeOpCode(opCode,remaining);
         String encodedRemaining = encodeRemaining(opCode, remaining);
         String encodedInstruction = binToOctal(encodedOpCode + encodedRemaining);
+        //Putting zeros at the beginning if the length is smaller than 6
+        encodedInstruction = String.format("%06d", Integer.parseInt(encodedInstruction));
         System.out.println(encodedInstruction);
     }
 
     private String encodeOpCode(String opCode, String remaining) {
         HashMap<String, String> opCodeMap = new HashMap<>();
         opCodeMap.put("LDR", "000001");
-        opCodeMap.put("LDX", "101001");
+        opCodeMap.put("LDX", "000100");
         opCodeMap.put("LDA", "000011");
         opCodeMap.put("STX", "101010");
         opCodeMap.put("STR", "000010");
         opCodeMap.put("JNE", "001011");
-        opCodeMap.put("JZ", "001010");
+        opCodeMap.put("JZ", "000110");
         opCodeMap.put("JCC", "001100");
         opCodeMap.put("AIR", "000110");
         opCodeMap.put("JSR", "001110");
         opCodeMap.put("JNE", "001011");
-        opCodeMap.put("JZ", "001010");
         opCodeMap.put("JCC", "001100");
         opCodeMap.put("AIR", "000110");
         opCodeMap.put("JSR", "001110");
@@ -54,6 +55,8 @@ public class Assembler {
         opCodeMap.put("STFR", "110011");
         opCodeMap.put("VADD", "100110");
         opCodeMap.put("VSUB", "100111");
+        opCodeMap.put("SETCCE", "100100");
+        opCodeMap.put("HLT", "000000");
         //TODO We need to decide whether the LOC is first or last
         //opCodeMap.put("LOC", encodeLOC(remaining));
         //opCodeMap.put("DATA" , encodeData(remaining));
@@ -172,8 +175,8 @@ public class Assembler {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append(encodeIndexRegister(splitted[1]));
             if (splitted.length == 4) {
-                remainingBuilder.append(encodeIndirectAddressing(splitted[2]));
-                remainingBuilder.append(encodeAddress(splitted[3]));
+                remainingBuilder.append(encodeIndirectAddressing(splitted[3]));
+                remainingBuilder.append(encodeAddress(splitted[2]));
             } else {
                 remainingBuilder.append("0");
                 remainingBuilder.append(encodeAddress(splitted[2]));
@@ -219,15 +222,10 @@ public class Assembler {
                 remainingBuilder.append(encodeAddress(splitted[1]));
             }
         } else if (opCode.equals("JZ")) {
-            remainingBuilder.append(encodeRegister(splitted[0]));
-            remainingBuilder.append(encodeIndexRegister(splitted[1]));
-            if (splitted.length == 4) {
-                remainingBuilder.append(encodeIndirectAddressing(splitted[2]));
-                remainingBuilder.append(encodeAddress(splitted[3]));
-            } else {
-                remainingBuilder.append("0");
-                remainingBuilder.append(encodeAddress(splitted[2]));
-            }
+            remainingBuilder.append(encodeRegister("0"));
+            remainingBuilder.append(encodeIndexRegister(splitted[0]));
+            remainingBuilder.append(encodeIndirectAddressing("0"));
+            remainingBuilder.append(encodeAddress(splitted[1]));
         } else if (opCode.equals("JNE")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append(encodeIndexRegister(splitted[1]));
@@ -258,7 +256,7 @@ public class Assembler {
                 remainingBuilder.append("0");
                 remainingBuilder.append(encodeAddress(splitted[1]));
             }
-        } else if (opCode.equals("JSR")) {// CHECK
+        } else if (opCode.equals("JSR")) {
             remainingBuilder.append("00");
             remainingBuilder.append(encodeIndexRegister(splitted[0]));
             if (splitted.length == 3) {
@@ -268,7 +266,7 @@ public class Assembler {
                 remainingBuilder.append("0");
                 remainingBuilder.append(encodeAddress(splitted[1]));
             }
-        } else if (opCode.equals("RFS")) {// CHECK
+        } else if (opCode.equals("RFS")) {
             for (int i = 0; i < 10 - (decimalToBinary(splitted[0])).length(); i++) {
                 remainingBuilder.append("0");
             }
@@ -313,14 +311,14 @@ public class Assembler {
                 remainingBuilder.append("0");
                 remainingBuilder.append(encodeAddress(splitted[2]));
             }
-        } else if (opCode.equals("AIR")) {// CHECK
+        } else if (opCode.equals("AIR")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append("000");
             for (int i = 0; i < 5 - (decimalToBinary(splitted[1])).length(); i++) {
                 remainingBuilder.append("0");
             }
             remainingBuilder.append(decimalToBinary(splitted[1]));
-        } else if (opCode.equals("SIR")) {// CHECK
+        } else if (opCode.equals("SIR")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append("000");
             for (int i = 0; i < 5 - (decimalToBinary(splitted[1])).length(); i++) {
@@ -442,13 +440,17 @@ public class Assembler {
                 remainingBuilder.append(encodeAddress(splitted[2]));
             }
         }
+
+        else if (opCode.equals("SETCCE")) {
+            remainingBuilder.append(encodeRegister(splitted[0]));
+            remainingBuilder.append("00000000");
+        }
         return remainingBuilder.toString();
     }
 
     private String binToOctal(String s) {
         // Converts Binary value to Octal format
-        int decimal = Integer.parseInt(s, 2);
-        String octalStr = Integer.toString(decimal, 8);
-        return octalStr;
+        int decimalValue = Integer.parseInt(s, 2);
+        return Integer.toOctalString(decimalValue);
     }
 }
