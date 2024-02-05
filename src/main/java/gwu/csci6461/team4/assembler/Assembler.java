@@ -2,16 +2,41 @@ package gwu.csci6461.team4.assembler;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Assembler {
 
-    public void assemble(String opCode, String remaining) {
-        String encodedOpCode = encodeOpCode(opCode,remaining);
-        String encodedRemaining = encodeRemaining(opCode, remaining);
-        String encodedInstruction = binToOctal(encodedOpCode + encodedRemaining);
+    private String encodedLocation;
+    private Map<String , String> locToInstructionMap;
+    public Assembler() {
+        encodedLocation = "";
+        locToInstructionMap = new LinkedHashMap<>();
+    }
+
+    public void assemble(String opCode, String remaining, String finalLocation) {
+        if(opCode.equals("LOC")){
+            if(!remaining.equals(finalLocation)) {
+                encodedLocation = decimalToOctal(remaining);
+            }
+
+            else {
+                encodedLocation = decimalToOctal(finalLocation);
+            }
+        }
+
+        else{
+            String encodedOpCode = encodeOpCode(opCode,remaining);
+            String encodedRemaining = encodeRemaining(opCode, remaining, finalLocation);
+            String encodedInstruction = binToOctal(encodedOpCode + encodedRemaining);
+            encodedInstruction = String.format("%06d", Integer.parseInt(encodedInstruction));
+            locToInstructionMap.put(encodedLocation, encodedInstruction);
+            int decimalLocation = Integer.parseInt(encodedLocation,8);
+            decimalLocation++;
+            encodedLocation = decimalToOctal(String.valueOf(decimalLocation));
+        }
         //Putting zeros at the beginning if the length is smaller than 6
-        encodedInstruction = String.format("%06d", Integer.parseInt(encodedInstruction));
-        System.out.println(encodedInstruction);
+        encodedLocation = String.format("%06d", Integer.parseInt(encodedLocation));
     }
 
     private String encodeOpCode(String opCode, String remaining) {
@@ -54,14 +79,8 @@ public class Assembler {
         opCodeMap.put("STFR", "100011");
         opCodeMap.put("SETCCE", "100100");
         opCodeMap.put("TRAP", "100101");
-        //TODO We need to decide whether the LOC is first or last
-        //opCodeMap.put("LOC", encodeLOC(remaining));
-        //opCodeMap.put("DATA" , encodeData(remaining));
-        return opCodeMap.get(opCode);
-    }
-
-    private String encodeLOC(String remaining){
-       return decimalToBinary(remaining);
+        opCodeMap.put("LOC", "");
+        return opCodeMap.getOrDefault(opCode,"000000");
     }
 
     private String encodeData(String data){
@@ -132,6 +151,13 @@ public class Assembler {
         return new BigInteger(decimalAddress, 10).toString(2);
     }
 
+    private String decimalToOctal(String decimalAddress) {
+        if (decimalAddress == null) {
+            decimalAddress = "0";
+        }
+        return new BigInteger(decimalAddress, 10).toString(8);
+    }
+
     //TODO CHANGE THE NAME OF THE FUNCTION FOR LR AND AL
     private String encode(String st) {
         return decimalToBinary(st);
@@ -164,7 +190,7 @@ public class Assembler {
         }
     }
 
-    private String encodeRemaining(String opCode, String remaining) {
+    private String encodeRemaining(String opCode, String remaining, String finalLocation) {
         StringBuilder remainingBuilder = new StringBuilder();
         String[] splitted = remaining.split(",");
 
@@ -442,6 +468,17 @@ public class Assembler {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append("00000000");
         }
+
+        else if (opCode.equals("Data")){
+            if(remaining.equals("End")){
+                remainingBuilder.append(encodeData(finalLocation));
+            }
+
+            else{
+                remainingBuilder.append(encodeData(remaining));
+            }
+        }
+
         return remainingBuilder.toString();
     }
 
@@ -449,5 +486,9 @@ public class Assembler {
         // Converts Binary value to Octal format
         int decimalValue = Integer.parseInt(s, 2);
         return Integer.toOctalString(decimalValue);
+    }
+
+    public Map<String, String> getLocToInstructionMap() {
+        return locToInstructionMap;
     }
 }
