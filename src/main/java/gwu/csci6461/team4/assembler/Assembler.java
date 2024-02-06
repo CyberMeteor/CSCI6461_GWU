@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+//Class Assembler
+
 public class Assembler {
 
     private String encodedLocation;
@@ -41,6 +43,8 @@ public class Assembler {
         encodedLocation = String.format("%06d", Integer.parseInt(encodedLocation));
     }
 
+    // Define the dictionary of Opcode using HasMap
+    
     private String encodeOpCode(String opCode, String remaining) {
         HashMap<String, String> opCodeMap = new HashMap<>();
         opCodeMap.put("HLT", "000000");
@@ -89,6 +93,7 @@ public class Assembler {
       return decimalToBinary(data);
     }
 
+    // encode register
     private String encodeRegister(String register) {
         int reg = Integer.parseInt(register);
         if (reg == 0) {
@@ -104,6 +109,7 @@ public class Assembler {
         }
     }
 
+    //Encode Index Register
     private String encodeIndexRegister(String indexRegister) {
         int ix = Integer.parseInt(indexRegister);
         if (ix == 0) {
@@ -119,6 +125,7 @@ public class Assembler {
         }
     }
 
+    //Encode Indirect Addressing 
     private String encodeIndirectAddressing(String indirectAddress) {
         int i = Integer.parseInt(indirectAddress);
         if (i == 0) {
@@ -130,6 +137,7 @@ public class Assembler {
         }
     }
 
+    // Encode Address
     private String encodeAddress(String address) {
         String binaryAddress = decimalToBinary(address);
         if (binaryAddress.length() == 5) {
@@ -146,6 +154,7 @@ public class Assembler {
         }
     }
 
+    
     private String decimalToBinary(String decimalAddress) {
         if (decimalAddress == null) {
             decimalAddress = "0";
