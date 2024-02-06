@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 
 public class FileManager {
@@ -34,6 +36,7 @@ public class FileManager {
                 assembler.assemble(splitted[0], splitted[1], finalLocation);
             }
             createLoadFile("load.txt", assembler.getLocToInstructionMap()); // Calling writeToFile after processing all lines
+            createListingFile("listing.txt", assembler.getLocToInstructionMap(), lines); // Write the listing file for the test case
         } catch (IOException exception) {
             System.out.println("Main.readLines-File Read Error : " + exception.getMessage());
         }
@@ -44,6 +47,26 @@ public class FileManager {
             for (Map.Entry<String, String> entry : locToInstructionMap.entrySet()) {
                 writer.write(entry.getKey() + " " + entry.getValue());
                 writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    public void createListingFile(String fileName, Map<String, String> locToInstructionMap, String[] inputInstructions) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            // Iterate through the locToInstructionMap and inputInstructions array simultaneously
+            Iterator<Map.Entry<String, String>> mapIterator = locToInstructionMap.entrySet().iterator();
+            int inputIndex = 0;
+            while (mapIterator.hasNext()) {
+                Map.Entry<String, String> entry = mapIterator.next();
+                String loc = entry.getKey();
+                String octalInstruction = entry.getValue();
+                String inputInstruction = inputInstructions[inputIndex];
+                // Write the line with the input instruction added
+                writer.write(loc + " " + octalInstruction + " " + inputInstruction);
+                writer.newLine();
+                inputIndex++;
             }
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
