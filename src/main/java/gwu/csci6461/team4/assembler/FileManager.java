@@ -45,8 +45,13 @@ public class FileManager {
     public void createLoadFile(String fileName, Map<String, String> locToInstructionMap) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (Map.Entry<String, String> entry : locToInstructionMap.entrySet()) {
-                writer.write(entry.getKey() + " " + entry.getValue());
-                writer.newLine();
+                String key = entry.getKey();
+                String value = entry.getValue();
+                //If value is not empty, write to the file
+                if (value != null && !value.trim().isEmpty()) {
+                    writer.write(key + " " + value);
+                    writer.newLine();
+                }
             }
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());

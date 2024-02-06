@@ -19,14 +19,11 @@ public class Assembler {
             if(!remaining.equals(finalLocation)) {
                 encodedLocation = decimalToOctal(remaining);
                 // first "LOC"
-                locToInstructionMap.put("000000", "000000");
+                locToInstructionMap.put("      ", "      ");
             } else {
-                // last "LOC"
-                int decimalLocation = Integer.parseInt(encodedLocation,8);
-                String encodedLastLocation = decimalToOctal(String.valueOf(decimalLocation));
-                encodedLastLocation = String.format("%06d", Integer.parseInt(encodedLastLocation));
-                locToInstructionMap.put(encodedLastLocation, "000000");
                 encodedLocation = decimalToOctal(finalLocation);
+                // last "LOC"
+                locToInstructionMap.put("       ", "     ");
             }
         }
 
