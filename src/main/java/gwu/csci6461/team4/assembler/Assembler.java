@@ -260,15 +260,10 @@ public class Assembler {
             remainingBuilder.append(encodeIndirectAddressing("0"));
             remainingBuilder.append(encodeAddress(splitted[1]));
         } else if (opCode.equals("JNE")) {
-            remainingBuilder.append(encodeRegister(splitted[0]));
-            remainingBuilder.append(encodeIndexRegister(splitted[1]));
-            if (splitted.length == 4) {
-                remainingBuilder.append(encodeIndirectAddressing(splitted[2]));
-                remainingBuilder.append(encodeAddress(splitted[3]));
-            } else {
-                remainingBuilder.append("0");
-                remainingBuilder.append(encodeAddress(splitted[2]));
-            }
+            remainingBuilder.append(encodeRegister("0"));
+            remainingBuilder.append(encodeIndexRegister(splitted[0]));
+            remainingBuilder.append(encodeIndirectAddressing("0"));
+            remainingBuilder.append(encodeAddress(splitted[1]));
         } else if (opCode.equals("JCC")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append(encodeIndexRegister(splitted[1]));
