@@ -91,6 +91,10 @@ public class Assembler {
       return decimalToBinary(data);
     }
 
+    private String encodeDevice(String device){
+        return decimalToBinary(device);
+    }
+
     // Encode register
     private String encodeRegister(String register) {
         int reg = Integer.parseInt(register);
@@ -393,10 +397,25 @@ public class Assembler {
             remainingBuilder.append("00000000");
         } else if (opCode.equals("IN")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
-            remainingBuilder.append("00000000");
+            remainingBuilder.append("000");
+            for (int i = 0; i < 5 - (encodeDevice(splitted[1])).length(); i++) {
+                remainingBuilder.append("0");
+            }
+            remainingBuilder.append(encodeDevice(splitted[1]));
         } else if (opCode.equals("OUT")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
-            remainingBuilder.append("00000000");
+            remainingBuilder.append("000");
+            for (int i = 0; i < 5 - (encodeDevice(splitted[1])).length(); i++) {
+                remainingBuilder.append("0");
+            }
+            remainingBuilder.append(encodeDevice(splitted[1]));
+        } else if (opCode.equals(("CHK"))){
+            remainingBuilder.append(encodeRegister(splitted[0]));
+            remainingBuilder.append("000");
+            for (int i = 0; i < 5 - (encodeDevice(splitted[1])).length(); i++) {
+                remainingBuilder.append("0");
+            }
+            remainingBuilder.append(encodeDevice(splitted[1]));
         } else if (opCode.equals("VADD")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append(encodeIndexRegister(splitted[1]));
