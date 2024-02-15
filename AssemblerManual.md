@@ -31,7 +31,7 @@ This documentation provides step-by-step instructions for unloading and running 
 
 ### Additional Notes:
 - The output `listing.txt` file will only contain the results of the instructions processed by the Assembler. It will not include any explanatory sections from the project description examples to avoid unnecessary confusion for future work.
-- Our team have tested the assembler by changing the input and attempting to run all the instructions in the project description, but in this input file, we only include all the instructions given as examples in the project description. To test additional instructions, simply modify the contents of the `input.txt` file to include the desired instructions.
+- Our team have tested the assembler by changing the input and attempting to run all the instructions in the project description, and some screenshots of our testing are included in the `testing_doc` file. To test additional instructions, simply modify the contents of the `input.txt` file to include the desired instructions.
 
 
 By following these steps, you should be able to successfully unload and run our Assembler, generating the required output files.
