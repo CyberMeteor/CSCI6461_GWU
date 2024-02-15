@@ -393,8 +393,8 @@ public class Assembler {
             remainingBuilder.append("00");
             remainingBuilder.append(encodeCount(splitted[1]));
         } else if (opCode.equals("TRAP")) {
-            remainingBuilder.append(encodeTRP(splitted[0]));
             remainingBuilder.append("00000000");
+            remainingBuilder.append(encodeTRP(splitted[0]));
         } else if (opCode.equals("IN")) {
             remainingBuilder.append(encodeRegister(splitted[0]));
             remainingBuilder.append("000");
