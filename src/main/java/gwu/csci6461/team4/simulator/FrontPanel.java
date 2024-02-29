@@ -174,6 +174,10 @@ public class FrontPanel extends JPanel {
 
     }//GEN-LAST:event_LoadLoadButtonActionPerformed
 
+    private void LoadPlusLoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadPlusLoadButtonActionPerformed
+
+    }//GEN-LAST:event_LoadPlusLoadButtonActionPerformed
+
     private void STPLoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_STPLoadButtonActionPerformed
         // Set Memory(MAR) to MBR
 
@@ -280,6 +284,7 @@ public class FrontPanel extends JPanel {
         CCTextField = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         LoadLoadButton = new javax.swing.JButton();
+        LoadPlusLoadButton = new javax.swing.JButton();
         ResetButton = new javax.swing.JToggleButton();
         Mem_2ValueTextField = new javax.swing.JTextField();
         Mem_1ValueTextField = new javax.swing.JTextField();
@@ -304,7 +309,7 @@ public class FrontPanel extends JPanel {
 
 
         //Setting background color
-        jPanel2.setBackground(new java.awt.Color(255, 202, 252));
+        jPanel2.setBackground(new java.awt.Color(205, 229, 245));
 
         //Setting Register names
         jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 13));
@@ -359,7 +364,7 @@ public class FrontPanel extends JPanel {
 
         //Initializing the IPL(Init) button
         IPLLoadButton.setText("IPL");
-        IPLLoadButton.setBackground(new java.awt.Color(120, 170, 255));
+        IPLLoadButton.setBackground(new java.awt.Color(19, 42, 78));
         IPLLoadButton.setActionCommand("Store");
         IPLLoadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -368,9 +373,9 @@ public class FrontPanel extends JPanel {
         });
 
         //Initializing the ST+ button
-        STPLoadButton.setActionCommand("ST+");
-        STPLoadButton.setBackground(new java.awt.Color(120, 170, 255));
-        STPLoadButton.setLabel("ST+");
+        STPLoadButton.setActionCommand("Store+");
+        STPLoadButton.setBackground(new java.awt.Color(19, 42, 78));
+        STPLoadButton.setLabel("Store+");
         STPLoadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 STPLoadButtonActionPerformed(evt);
@@ -379,7 +384,7 @@ public class FrontPanel extends JPanel {
 
         //Initializing the Store button
         STLoadButton.setLabel("Store");
-        STLoadButton.setBackground(new java.awt.Color(120, 170, 255));
+        STLoadButton.setBackground(new java.awt.Color(19, 42, 78));
         STLoadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 STLoadButtonActionPerformed(evt);
@@ -628,10 +633,19 @@ public class FrontPanel extends JPanel {
 
         //Initializing the Load button
         LoadLoadButton.setText("Load");
-        LoadLoadButton.setBackground(new java.awt.Color(120, 170, 255));
+        LoadLoadButton.setBackground(new java.awt.Color(19, 42, 78));
         LoadLoadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 LoadLoadButtonActionPerformed(evt);
+            }
+        });
+
+        //Initializing the Load+ button
+        LoadPlusLoadButton.setText("Load+");
+        LoadPlusLoadButton.setBackground(new java.awt.Color(19, 42, 78));
+        LoadPlusLoadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LoadPlusLoadButtonActionPerformed(evt);
             }
         });
 
@@ -699,7 +713,7 @@ public class FrontPanel extends JPanel {
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(154, 154, 154)
+                                                .addGap(150, 150, 150)
                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addGroup(jPanel2Layout.createSequentialGroup()
@@ -715,49 +729,55 @@ public class FrontPanel extends JPanel {
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(TenButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(31, 31, 31)
-                                                .addComponent(jLabel8)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel27)
-                                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                .addComponent(PCTextfField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(PCLoadButton))))
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(37, 37, 37)
-                                                .addComponent(jLabel11)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(IRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(IRLoadButton))
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(20, 20, 20)
+                                                .addGap(1, 1, 1)
                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                .addComponent(jLabel13)
+                                                                .addComponent(jLabel5)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(CCTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(IXR1TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(IXR1LoadButton))
                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                        .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
-                                                                                .addGap(5, 5, 5))
-                                                                        .addComponent(jLabel12))
                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                .addGap(1, 1, 1)
-                                                                                .addComponent(MARTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                .addComponent(MFRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(MBRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(MARLoadButton)
-                                                        .addComponent(MBRLoadButton))))
-                                .addGap(87, 87, Short.MAX_VALUE)
+                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                                .addComponent(jLabel4)
+                                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                                .addComponent(GPR3TextField))
+                                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                                .addComponent(jLabel3)
+                                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                                .addComponent(GPR2TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                        .addComponent(jLabel1)
+                                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addComponent(jLabel26)
+                                                                                                .addComponent(GPR0TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                .addComponent(jLabel2)
+                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addComponent(GPR1TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(GPR0LoadButton)
+                                                                        .addComponent(GPR1LoadButton)
+                                                                        .addComponent(GPR2LoadButton)
+                                                                        .addComponent(GPR3LoadButton)))
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                        .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                        .addComponent(IXR2TextField)
+                                                                        .addComponent(IXR3TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(IXR2LoadButton)
+                                                                        .addComponent(IXR3LoadButton)))))
+                                .addGap(1, 1, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                                 .addGap(0, 491, Short.MAX_VALUE)
@@ -768,58 +788,55 @@ public class FrontPanel extends JPanel {
                                                 .addComponent(STLoadButton)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(LoadLoadButton)
-                                                .addGap(465, 465, 465))
+                                                .addGap(18, 18, 18)
+                                                .addComponent(LoadPlusLoadButton)
+                                                .addGap(1, 1, 1))
                                         .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addContainerGap(400,400)
                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                .addGap(52, 52, 52)
+                                                                .addGap(31, 31, 31)
+                                                                .addComponent(jLabel8)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel27)
+                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                .addComponent(PCTextfField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(PCLoadButton))))
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addGap(37, 37, 37)
+                                                                .addComponent(jLabel11)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(IRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(IRLoadButton))
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addGap(20, 20, 20)
                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                .addComponent(jLabel5)
+                                                                                .addComponent(jLabel13)
                                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                .addComponent(IXR1TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                .addComponent(IXR1LoadButton))
+                                                                                .addComponent(CCTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                                                .addComponent(jLabel4)
-                                                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                                .addComponent(GPR3TextField))
-                                                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                                                .addComponent(jLabel3)
-                                                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                                .addComponent(GPR2TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                                                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                                        .addComponent(jLabel1)
-                                                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addComponent(jLabel26)
-                                                                                                                .addComponent(GPR0TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                                .addComponent(jLabel2)
-                                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                .addComponent(GPR1TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                        .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                        .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
+                                                                                                .addGap(5, 5, 5))
+                                                                                        .addComponent(jLabel12))
                                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                        .addComponent(GPR0LoadButton)
-                                                                                        .addComponent(GPR1LoadButton)
-                                                                                        .addComponent(GPR2LoadButton)
-                                                                                        .addComponent(GPR3LoadButton)))
-                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                        .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING))
-                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                                        .addComponent(IXR2TextField)
-                                                                                        .addComponent(IXR3TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                        .addComponent(IXR2LoadButton)
-                                                                                        .addComponent(IXR3LoadButton)))))
+                                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                                .addGap(1, 1, 1)
+                                                                                                .addComponent(MARTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                .addComponent(MFRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                .addComponent(MBRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(MARLoadButton)
+                                                                        .addComponent(MBRLoadButton))))
                                                         .addGroup(jPanel2Layout.createSequentialGroup()
                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                                         .addGroup(jPanel2Layout.createSequentialGroup()
@@ -838,7 +855,7 @@ public class FrontPanel extends JPanel {
                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                                         .addComponent(FiveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                         .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addGap(206, 206, 206)
+                                                                .addGap(20, 20, 20)
                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                                         .addGroup(jPanel2Layout.createSequentialGroup()
                                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -861,7 +878,7 @@ public class FrontPanel extends JPanel {
                                                                                         .addComponent(ResetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                         .addComponent(RunButton)))
                                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                                .addGap(72, 72, 72)
+                                                                                .addGap(1, 1, 1)
                                                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                                                         .addGroup(jPanel2Layout.createSequentialGroup()
                                                                                                 .addComponent(jLabel15)
@@ -896,7 +913,7 @@ public class FrontPanel extends JPanel {
                                                                                                 .addComponent(Mem_1ValueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                                 .addComponent(Mem0ValueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                                         .addComponent(jLabel25))))))
-                                                .addGap(317, 317, 317))))
+                                                .addGap(1, 1, 1))))
         );
         jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -932,14 +949,43 @@ public class FrontPanel extends JPanel {
                                                         .addComponent(jLabel18)
                                                         .addComponent(Mem2ValueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(Mem2RowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(141, 141, 141)
+                                                .addGap(1, 1, 1)
                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                         .addComponent(IPLLoadButton)
                                                         .addComponent(STPLoadButton)
                                                         .addComponent(STLoadButton)
-                                                        .addComponent(LoadLoadButton)))
+                                                        .addComponent(LoadLoadButton)
+                                                        .addComponent(LoadPlusLoadButton)))
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                                        .addComponent(jLabel27)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(PCLoadButton)
+                                                                .addComponent(PCTextfField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(IRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(IRLoadButton)
+                                                                .addComponent(jLabel11))
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(MARTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(jLabel9)
+                                                                .addComponent(MARLoadButton))
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(MBRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(jLabel10)
+                                                                .addComponent(MBRLoadButton))
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(MFRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(jLabel12))
+                                                        .addGap(1, 1, 1))))
+//                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                .addGroup(jPanel2Layout.createSequentialGroup()
                                                         .addComponent(jLabel26)
                                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -979,38 +1025,11 @@ public class FrontPanel extends JPanel {
                                                                                 .addComponent(jLabel7)
                                                                                 .addComponent(IXR3LoadButton)))
                                                                 .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                        .addGap(103, 103, 103)
+                                                                        .addGap(1, 1, 1)
                                                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                                                 .addComponent(jLabel13)
                                                                                 .addComponent(CCTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                                        .addGap(97, 97, 97))
-                                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                                        .addComponent(jLabel27)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(PCLoadButton)
-                                                                .addComponent(PCTextfField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                .addComponent(IRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(IRLoadButton)
-                                                                .addComponent(jLabel11))
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                .addComponent(MARTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(jLabel9)
-                                                                .addComponent(MARLoadButton))
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                .addComponent(MBRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(jLabel10)
-                                                                .addComponent(MBRLoadButton))
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                .addComponent(MFRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(jLabel12))
-                                                        .addGap(153, 153, 153))))
+                                                        .addGap(1, 1, 1))
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel2Layout.createSequentialGroup()
                                                 .addGap(57, 57, 57)
@@ -1110,6 +1129,7 @@ public class FrontPanel extends JPanel {
     private javax.swing.JButton IXR3LoadButton;
     private javax.swing.JTextField IXR3TextField;
     private javax.swing.JButton LoadLoadButton;
+    private javax.swing.JButton LoadPlusLoadButton;
     private javax.swing.JButton MARLoadButton;
     private javax.swing.JTextField MARTextField;
     private javax.swing.JButton MBRLoadButton;
