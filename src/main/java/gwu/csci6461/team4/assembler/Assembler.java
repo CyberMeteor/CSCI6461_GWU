@@ -10,7 +10,10 @@ public class Assembler {
 
     private String encodedLocation;
     private Map<String , String> locToInstructionMap;
+    private HashMap<String, String> opCodeMap;
+
     public Assembler() {
+        opCodeMap = new HashMap<>();
         encodedLocation = "";
         locToInstructionMap = new LinkedHashMap<>();
     }
@@ -29,7 +32,7 @@ public class Assembler {
         }
 
         else{
-            String encodedOpCode = encodeOpCode(opCode,remaining);
+            String encodedOpCode = encodeOpCode(opCode);
             String encodedRemaining = encodeRemaining(opCode, remaining, finalLocation);
             String encodedInstruction = binToOctal(encodedOpCode + encodedRemaining);
             encodedInstruction = String.format("%06d", Integer.parseInt(encodedInstruction));
@@ -43,8 +46,8 @@ public class Assembler {
     }
 
     // Define the dictionary of Opcode using HasMap
-    private String encodeOpCode(String opCode, String remaining) {
-        HashMap<String, String> opCodeMap = new HashMap<>();
+    private String encodeOpCode(String opCode) {
+        opCodeMap = new HashMap<>();
         opCodeMap.put("HLT", "000000");
         opCodeMap.put("LDR", "000001");
         opCodeMap.put("STR", "000010");
@@ -515,4 +518,9 @@ public class Assembler {
     public Map<String, String> getLocToInstructionMap() {
         return locToInstructionMap;
     }
+
+    public Map<String, String> getOpCodeMap() {
+        return opCodeMap;
+    }
+
 }

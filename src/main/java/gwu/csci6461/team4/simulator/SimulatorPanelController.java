@@ -1,116 +1,147 @@
 package gwu.csci6461.team4.simulator;
 
+import gwu.csci6461.team4.CPU;
+import gwu.csci6461.team4.registers.RegisterType;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
+
+import java.util.Arrays;
+
+import java.util.Timer;
 
 public class SimulatorPanelController {
 
+    private Timeline timeline;
+    @FXML
+    public void initialize() {
+        initComponents();
+        cpu = new CPU();
+        int[] tempValue = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0};
+        cpu.setRegisterValue(RegisterType.ProgramCounter, tempValue);
+        timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> updateRegisters()));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();    }
+
+
+    CPU cpu;
+    int[] initialButtonArray = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
     // button onClick() function
     @FXML
-    protected void GPR0LoadClick(){
-        GPR0TextField.setText("000001");
+    protected void GPR0LoadClick() {
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister0, Arrays.copyOfRange(initialButtonArray, 0, 16));
     }
 
     @FXML
-    protected void GPR1LoadClick(){
+    protected void GPR1LoadClick() {
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister1, Arrays.copyOfRange(initialButtonArray, 0, 16));
+    }
+
+    @FXML
+    protected void GPR2LoadClick() {
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister2, Arrays.copyOfRange(initialButtonArray, 0, 16));
+    }
+
+    @FXML
+    protected void GPR3LoadClick() {
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister3, Arrays.copyOfRange(initialButtonArray, 0, 16));
+    }
+
+    @FXML
+    protected void IXR1LoadClick() {
+        cpu.setRegisterValue(RegisterType.IndexRegister1, Arrays.copyOfRange(initialButtonArray, 0, 16));
+    }
+
+    @FXML
+    protected void IXR2LoadClick() {
+        cpu.setRegisterValue(RegisterType.IndexRegister2, Arrays.copyOfRange(initialButtonArray, 0, 16));
+    }
+
+    @FXML
+    protected void IXR3LoadClick() {
+        cpu.setRegisterValue(RegisterType.IndexRegister3, Arrays.copyOfRange(initialButtonArray, 0, 16));
+    }
+
+    @FXML
+    protected void PCLoadClick() {
+        cpu.setRegisterValue(RegisterType.ProgramCounter, Arrays.copyOfRange(initialButtonArray, 4, 16));
+    }
+
+    @FXML
+    protected void MARLoadClick() {
+        cpu.setRegisterValue(RegisterType.MemoryAddressRegister, Arrays.copyOfRange(initialButtonArray, 4, 16));
+    }
+
+    @FXML
+    protected void MBRLoadClick() {
+        cpu.setRegisterValue(RegisterType.MemoryBufferRegister, Arrays.copyOfRange(initialButtonArray, 0, 16));
+    }
+
+    @FXML
+    protected void LoadClick() {
+        // Set MBR to the value located at MAR
+        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = cpu.binaryToInt(currentMAR);
+        cpu.setRegisterValue(RegisterType.MemoryBufferRegister, cpu.getMemoryValue(transformedMAR));
+    }
+
+    @FXML
+    protected void LoadPlusClick() {
+        // Set MBR to the value located at MAR
+        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = cpu.binaryToInt(currentMAR);
+        cpu.setRegisterValue(RegisterType.MemoryBufferRegister, cpu.getMemoryValue(transformedMAR));
+        //Increment MAR 1
+        transformedMAR++;
+        int[] newMAR = cpu.intToBinaryArrayShort(Integer.toBinaryString(transformedMAR));
+        cpu.setRegisterValue(RegisterType.MemoryAddressRegister, newMAR);
+    }
+
+    @FXML
+    protected void StoreClick() {
+        // Set Memory(MAR) to MBR
+        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = cpu.binaryToInt(currentMAR);
+        cpu.setMemoryValue(transformedMAR, cpu.getRegisterValue(RegisterType.MemoryBufferRegister));
+    }
+
+    @FXML
+    protected void StorePlusClick() {
+        // Setting MAR to MBR
+        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = cpu.binaryToInt(currentMAR);
+        cpu.setMemoryValue(transformedMAR, cpu.getRegisterValue(RegisterType.MemoryBufferRegister));
+        //ADD 1
+        transformedMAR++;
+        int[] newMAR = cpu.intToBinaryArrayShort(Integer.toBinaryString(transformedMAR));
+        cpu.setRegisterValue(RegisterType.MemoryAddressRegister, newMAR);
+    }
+
+    @FXML
+    protected void RunClick() {
         // TODO add handling code here:
 
     }
 
     @FXML
-    protected void GPR2LoadClick(){
-        // TODO add handling code here:
-
-    }
-    @FXML
-    protected void GPR3LoadClick(){
-        // TODO add handling code here:
-
+    protected void StepClick() {
+        cpu.execute("singleStep");
     }
 
     @FXML
-    protected void IXR1LoadClick(){
-        // TODO add handling code here:
-
+    protected void HaltClick() {
+        int [] msg = new int[]{1};
+        cpu.setRegisterValue(RegisterType.HLT,msg);
     }
 
     @FXML
-    protected void IXR2LoadClick(){
+    protected void IPLClick() {
         // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void IXR3LoadClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void PCLoadClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void MARLoadClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void MBRLoadClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void LoadClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void LoadPlusClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void StoreClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void StorePlusClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void RunClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void StepClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void HaltClick(){
-        // TODO add handling code here:
-
-    }
-
-    @FXML
-    protected void IPLClick(){
-        // TODO add handling code here:
-
     }
 
 
@@ -239,5 +270,95 @@ public class SimulatorPanelController {
 
     @FXML
     private TextField ProgramFileTextField;
+
+
+
+    public void initComponents() {
+        OctalInputTextField.setOnAction(event -> {
+            // Get the octal input from the octal text field
+            String octalInput = OctalInputTextField.getText();
+
+            // Convert octal input to binary
+            String binaryOutput = octalToBinary(octalInput);
+
+            for (int i = 0; i < binaryOutput.length(); i++) {
+                initialButtonArray[i] = Character.getNumericValue(binaryOutput.charAt(i));
+            }
+
+            BinaryTextField.setText(formatText(initialButtonArray));
+        });
+    }
+
+    private String octalToBinary(String octalInput) {
+        // Convert octal string to binary string
+        StringBuilder binaryString = new StringBuilder();
+        for (int i = 0; i < octalInput.length(); i++) {
+            char octalChar = octalInput.charAt(i);
+            int octalDigit = Character.digit(octalChar, 8); // Use base 8 (octal)
+            String binaryDigit = String.format("%03d", Integer.parseInt(Integer.toBinaryString(octalDigit)));
+            binaryString.append(binaryDigit);
+        }
+
+        // Pad with zeros to make it 16 bits
+        while (binaryString.length() < 16) {
+            binaryString.insert(0, "0");
+        }
+
+        return binaryString.toString();
+    }
+
+    public void updateRegisters() {
+
+        //Update PC
+        int[] tempRegisterValue;
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.ProgramCounter);
+        PCTextField.setText(formatText(tempRegisterValue));
+
+        //Update CC
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.ConditionCode);
+        CCTextField.setText(formatText(tempRegisterValue));
+
+        //Update MAR
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
+        MARTextField.setText(formatText(tempRegisterValue));
+
+        //Update MBR
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.MemoryBufferRegister);
+        MBRTextField.setText(formatText(tempRegisterValue));
+        //Update IR
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.InstructionRegister);
+        IRTextField.setText(formatText(tempRegisterValue));
+        //Update MFR
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.MemoryFaultRegister);
+        MFRTextField.setText(formatText(tempRegisterValue));
+        //Update X1
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.IndexRegister1);
+        IXR1TextField.setText(formatText(tempRegisterValue));
+        //Update X2
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.IndexRegister2);
+        IXR2TextField.setText(formatText(tempRegisterValue));
+        //Update X3
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.IndexRegister3);
+        IXR3TextField.setText(formatText(tempRegisterValue));
+        //Update GPR0
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.GeneralPurposeRegister0);
+        GPR0TextField.setText(formatText(tempRegisterValue));
+        //Update GPR1
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.GeneralPurposeRegister1);
+        GPR1TextField.setText(formatText(tempRegisterValue));
+        //Update GPR2
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.GeneralPurposeRegister2);
+        GPR2TextField.setText(formatText(tempRegisterValue));
+        //Update GPR3
+        tempRegisterValue = cpu.getRegisterValue(RegisterType.GeneralPurposeRegister3);
+        GPR3TextField.setText(formatText(tempRegisterValue));
+    }
+
+    //Function to format int[] values
+    public String formatText(int[] arr) {
+        String res = Arrays.toString(arr).replaceAll("[\\[\\],]", "");
+        return res;
+    }
+
 
 }
