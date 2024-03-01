@@ -8,11 +8,15 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import javafx.util.Duration;
 
 import java.util.Arrays;
 
-import java.util.Timer;
 
 public class SimulatorPanelController {
 
@@ -140,8 +144,36 @@ public class SimulatorPanelController {
     }
 
     @FXML
-    protected void IPLClick() {
-        // TODO add handling code here:
+    protected void IPLClick(){
+        // Asks for the txt file to be read and once we select the ipl.txt file then it reads the file and loads into memory
+
+        // Create a file chooser
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select IPL File");
+
+        //Set the initial directory to the user's home directory
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        //Set the file extension filter to only show text files
+        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extensionFilter);
+
+        //Show the file chooser dialog
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        //If a file is selected
+        if (selectedFile != null){
+            //Read the content of the selected file and put it into the memory (now I print it for testing)
+            try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+                String line;
+                while ((line = br.readLine()) != null){
+                    //Save to the memory
+                    System.out.println(line);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 
 
