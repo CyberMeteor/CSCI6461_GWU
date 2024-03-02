@@ -78,29 +78,29 @@
                <children>
                   <AnchorPane layoutX="16.0" layoutY="38.0" prefHeight="39.0" prefWidth="263.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                      <children>
-                        <Label fx:id="PCLabel" layoutX="12.0" layoutY="10.0" text="PC" />
+                        <Label fx:id="PCLabel" layoutX="12.0" layoutY="10.0" text="PC" AnchorPane.leftAnchor="0.0" />
                         <TextField fx:id="PCTextField" layoutX="40.0" layoutY="7.0" text="000000000000" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="7.0" />
                         <Button id="PCLoadButton" layoutX="214.0" layoutY="6.0" mnemonicParsing="false" onAction="#PCLoadClick" text="Load" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="7.0" />
                      </children>
                   </AnchorPane>
                   <AnchorPane layoutX="20.0" layoutY="77.0" prefHeight="39.0" prefWidth="263.0">
                      <children>
-                        <Label fx:id="MARLabel" layoutX="12.0" layoutY="10.0" text="MAR" />
+                        <Label fx:id="MARLabel" layoutX="12.0" layoutY="10.0" text="MAR" AnchorPane.leftAnchor="0.0" />
                         <TextField fx:id="MARTextField" layoutX="50.0" layoutY="7.0" text="000000000000" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="7.0" />
                         <Button id="MARLoadButton" layoutX="214.0" layoutY="6.0" mnemonicParsing="false" onAction="#MARLoadClick" text="Load" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="7.0" />
                      </children>
                   </AnchorPane>
                   <AnchorPane layoutX="20.0" layoutY="117.0" prefHeight="39.0" prefWidth="263.0">
                      <children>
-                        <Label fx:id="MBRLabel" layoutX="12.0" layoutY="10.0" text="MBR" />
-                        <TextField fx:id="MBRTextField" layoutX="50.0" layoutY="7.0" text="0000000000000000" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="7.0" />
+                        <Label fx:id="MBRLabel" layoutX="12.0" layoutY="10.0" text="MBR" AnchorPane.leftAnchor="0.0" />
+                        <TextField fx:id="MBRTextField" layoutX="50.0" layoutY="7.0" text="0000000000000000" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="7.0" />
                         <Button id="MBRLoadButton" layoutX="214.0" layoutY="6.0" mnemonicParsing="false" onAction="#MBRLoadClick" text="Load" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="7.0" />
                      </children>
                   </AnchorPane>
                   <AnchorPane layoutX="20.0" layoutY="156.0" prefHeight="39.0" prefWidth="263.0">
                      <children>
-                        <Label fx:id="IRLabel" layoutX="12.0" layoutY="10.0" text="IR" />
-                        <TextField fx:id="IRTextField" layoutX="50.0" layoutY="7.0" text="0000000000000000" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="7.0" />
+                        <Label fx:id="IRLabel" layoutX="12.0" layoutY="10.0" text="IR" AnchorPane.leftAnchor="0.0" />
+                        <TextField fx:id="IRTextField" layoutX="50.0" layoutY="7.0" text="0000000000000000" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="7.0" />
                      </children>
                   </AnchorPane>
                   <AnchorPane layoutX="20.0" layoutY="195.0" prefHeight="54.0" prefWidth="263.0">
