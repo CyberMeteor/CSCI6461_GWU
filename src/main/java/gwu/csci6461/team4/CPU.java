@@ -126,6 +126,51 @@ public class CPU {
         return returnValue;
     }
 
+    public int octalToInt(String octal){
+        int ret_val = Integer.parseInt(octal, 8);
+        return ret_val;
+    }
+
+    // For MBR
+    public int[] octalToBinaryArray(String octal){
+        int[] ret_val = new int[16];
+        octal = octal.replaceAll("0", "000");
+        octal = octal.replaceAll("1", "001");
+        octal = octal.replaceAll("2", "010");
+        octal = octal.replaceAll("3", "011");
+        octal = octal.replaceAll("4", "100");
+        octal = octal.replaceAll("5", "101");
+        octal = octal.replaceAll("6", "110");
+        octal = octal.replaceAll("7", "111");
+
+        char[] arr = octal.toCharArray();
+
+        for (int i = 0; i < (octal.length()-2); i++) {
+            ret_val[i] = Character.getNumericValue(octal.charAt(i+2));
+        }
+        return ret_val;
+    }
+
+    // For MAR
+    public int[] octalToBinaryArrayShort(String octal){
+        int[] ret_val = new int[12];
+        octal = octal.replaceAll("0", "000");
+        octal = octal.replaceAll("1", "001");
+        octal = octal.replaceAll("2", "010");
+        octal = octal.replaceAll("3", "011");
+        octal = octal.replaceAll("4", "100");
+        octal = octal.replaceAll("5", "101");
+        octal = octal.replaceAll("6", "110");
+        octal = octal.replaceAll("7", "111");
+
+        char[] arr = octal.toCharArray();
+
+        for (int i = 0; i < (octal.length()-6); i++) {
+            ret_val[i] = Character.getNumericValue(octal.charAt(i+6));
+        }
+        return ret_val;
+    }
+
     //Returns the memory value
     public int[] getMemoryValue(int row){
         if (row < 6){

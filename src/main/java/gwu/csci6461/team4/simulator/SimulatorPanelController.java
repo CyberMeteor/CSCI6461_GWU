@@ -1,6 +1,7 @@
 package gwu.csci6461.team4.simulator;
 
 import gwu.csci6461.team4.CPU;
+import gwu.csci6461.team4.Memory;
 import gwu.csci6461.team4.registers.RegisterType;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -15,7 +16,10 @@ import java.io.File;
 import java.io.FileReader;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class SimulatorPanelController {
@@ -34,6 +38,8 @@ public class SimulatorPanelController {
 
     CPU cpu;
     int[] initialButtonArray = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    Memory mem;
 
     // button onClick() function
     @FXML
@@ -163,17 +169,31 @@ public class SimulatorPanelController {
 
         //If a file is selected
         if (selectedFile != null){
-            //Read the content of the selected file and put it into the memory (now I print it for testing)
+            //Read the content of the selected file and put it into the memory
             try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
                 String line;
-                while ((line = br.readLine()) != null){
-                    //Save to the memory
-                    System.out.println(line);
+                int rowNum = 0;
+                while ((line = br.readLine()) != null && rowNum < 2048){
+                    String[] tokens = line.split(" ");
+
+                    //Get the address and load into MAR
+                    int row = cpu.octalToInt(tokens[0]);
+                    int[] row_binary = cpu.octalToBinaryArrayShort(tokens[0]);
+                    cpu.setRegisterValue(RegisterType.MemoryAddressRegister, row_binary);
+
+                    //Get the value and load into MBR
+                    int[] value = cpu.octalToBinaryArray(tokens[1]);
+                    cpu.setRegisterValue(RegisterType.MemoryBufferRegister, value);
+
+                    cpu.setMemoryValue(row, value);
+                    rowNum++;
                 }
-            }catch (Exception e){
-                e.printStackTrace();
+            }catch (IOException ex){
+                Logger.getLogger(SimulatorPanelController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        int[] default_PC_loc = new int[]{0,0,0,0,0,0,1,1,0,0,0,0};
+        cpu.setRegisterValue(RegisterType.ProgramCounter, default_PC_loc);
     }
 
 
