@@ -14,7 +14,7 @@ public class Assembler {
 
     public Assembler() {
         opCodeMap = new HashMap<>();
-        opCodeMap.put("HLT", "000000");
+        opCodeMap.put("HLT" , "000000");
         opCodeMap.put("LDR", "000001");
         opCodeMap.put("STR", "000010");
         opCodeMap.put("LDA", "000011");

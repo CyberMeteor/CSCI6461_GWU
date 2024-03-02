@@ -109,30 +109,48 @@ public class CPU {
     }
 
     //Converts a binary int value to binary array value specifically for the PC
-    public int[] intToBinaryArrayShort(String value){
+    public int[] intToBinaryArrayShort(String value) {
         int[] returnValue = new int[12];
 
         char[] arr = value.toCharArray();
 
 
         for (int i = 0; i < 12; i++) {
-            if (i < 12 - arr.length){
+            if (i < 12 - arr.length) {
                 returnValue[i] = 0;
-            }else{
-                returnValue[i] = Character.getNumericValue(value.charAt(i-(12 - arr.length)));
+            } else {
+                returnValue[i] = Character.getNumericValue(value.charAt(i - (12 - arr.length)));
             }
 
         }
         return returnValue;
     }
 
-    public int octalToInt(String octal){
+    //Converts a binary int value to binary array value.
+    public int[] intToBinaryArray(String value) {
+        int[] returnValue = new int[16];
+
+        char[] arr = value.toCharArray();
+
+
+        for (int i = 0; i < 16; i++) {
+            if (i < 16 - arr.length) {
+                returnValue[i] = 0;
+            } else {
+                returnValue[i] = Character.getNumericValue(value.charAt(i - (16 - arr.length)));
+            }
+
+        }
+        return returnValue;
+    }
+
+    public int octalToInt(String octal) {
         int ret_val = Integer.parseInt(octal, 8);
         return ret_val;
     }
 
     // For MBR
-    public int[] octalToBinaryArray(String octal){
+    public int[] octalToBinaryArray(String octal) {
         int[] ret_val = new int[16];
         octal = octal.replaceAll("0", "000");
         octal = octal.replaceAll("1", "001");
@@ -145,14 +163,14 @@ public class CPU {
 
         char[] arr = octal.toCharArray();
 
-        for (int i = 0; i < (octal.length()-2); i++) {
-            ret_val[i] = Character.getNumericValue(octal.charAt(i+2));
+        for (int i = 0; i < (octal.length() - 2); i++) {
+            ret_val[i] = Character.getNumericValue(octal.charAt(i + 2));
         }
         return ret_val;
     }
 
     // For MAR
-    public int[] octalToBinaryArrayShort(String octal){
+    public int[] octalToBinaryArrayShort(String octal) {
         int[] ret_val = new int[12];
         octal = octal.replaceAll("0", "000");
         octal = octal.replaceAll("1", "001");
@@ -165,53 +183,63 @@ public class CPU {
 
         char[] arr = octal.toCharArray();
 
-        for (int i = 0; i < (octal.length()-6); i++) {
-            ret_val[i] = Character.getNumericValue(octal.charAt(i+6));
+        for (int i = 0; i < (octal.length() - 6); i++) {
+            ret_val[i] = Character.getNumericValue(octal.charAt(i + 6));
         }
         return ret_val;
     }
 
-    //Returns the memory value
-    public int[] getMemoryValue(int row){
-        if (row < 6){
-            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    public int binaryArrayShortToInt(int[] binaryArray) {
+        int value = 0;
+        for (int i = 0; i < binaryArray.length; i++) {
+            value = (value << 1) + binaryArray[i];
+        }
+        return value;
+    }
 
-        }else{
+    //Returns the memory value
+    public int[] getMemoryValue(int row) {
+        if (row < 6) {
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        } else {
             return mem.getMemoryValue(row);
         }
     }
 
-    public void setMemoryValue(int row, int[] value){
-        if (row < 6){
-            int[] fault_code = new int[]{0,0,0,1};
+    public void setMemoryValue(int row, int[] value) {
+        if (row < 6) {
+            int[] fault_code = new int[]{0, 0, 0, 1};
             mfr.setRegisterValue(fault_code);
-            int [] msg = new int[]{1};
+            int[] msg = new int[]{1};
             hlt.setRegisterValue(msg);
-        }else{
+        } else {
             mem.setMemoryValue(row, value);
         }
     }
 
-    public void execute () {
-        //We first get the instruction location and save it to IR from PC
-        int[] instructionAddress = getRegisterValue(RegisterType.ProgramCounter);
-        int intAddress = binaryToInt(instructionAddress);
-        setRegisterValue(RegisterType.InstructionRegister,getMemoryValue(intAddress));
+    public void execute(String type) {
+        if ("single".equals(type)) {
+            //We first get the instruction location and save it to IR from PC
+            int[] instructionAddress = getRegisterValue(RegisterType.ProgramCounter);
+            int intAddress = binaryToInt(instructionAddress);
+            setRegisterValue(RegisterType.InstructionRegister, getMemoryValue(intAddress));
 
-        //Increment PC
-        int[] pc = getRegisterValue(RegisterType.ProgramCounter);
-        int transformedPC = binaryToInt(pc);
-        transformedPC = transformedPC+1;
-        int[] latestPC = intToBinaryArrayShort(Integer.toBinaryString(transformedPC));
-        setRegisterValue(RegisterType.ProgramCounter, latestPC);
+            //Increment PC
+            int[] pc = getRegisterValue(RegisterType.ProgramCounter);
+            int transformedPC = binaryToInt(pc);
+            transformedPC = transformedPC + 1;
+            int[] latestPC = intToBinaryArrayShort(Integer.toBinaryString(transformedPC));
+            setRegisterValue(RegisterType.ProgramCounter, latestPC);
 
-        //Read and decode instruction
-        int[]instructionBinary = getMemoryValue(intAddress);
-        int[] opCode = Arrays.copyOfRange(instructionBinary, 0, 6);
-        String instruction = decodeOPCode(opCode);
-        int[] result = computeEffectiveAddr(instructionBinary);
-        executeInstruction(instruction,result);
+            //Read and decode instruction
+            int[] instructionBinary = getMemoryValue(intAddress);
+            int[] opCode = Arrays.copyOfRange(instructionBinary, 0, 6);
+            String instruction = decodeOPCode(opCode);
+            int[] result = computeEffectiveAddr(instructionBinary);
+            executeInstruction(instruction, result);
 
+        }
     }
 
     private String decodeOPCode(int[] binaryOPCode) {
@@ -232,41 +260,33 @@ public class CPU {
 
     private void executeInstruction(String instruction, int[] effectiveAddress) {
 
-        if(instruction.equals("LDR")){
-            int EA = effectiveAddress[0];
-            int R= effectiveAddress[2];
-            setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
-            switch(R) {
-                case 0:
-                    //Set MBR
-                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
-                    //Set register value from MBR
-                    gpr0.setRegisterValue(mbr.getRegisterValue());
-                    break;
-                case 1:
-                    //Set MBR to the value to be stored in register
-                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
-                    //Set register to value from MBR
-                    gpr1.setRegisterValue(mbr.getRegisterValue());
-                    break;
-                case 2:
-                    //Set MBR to the value to be stored in register
-                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
-                    // Set register to value from MBR
-                    gpr2.setRegisterValue(mbr.getRegisterValue());
-                    break;
-                default:
-                    //Set MBR to the value to be stored in register
-                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
-                    //Set register to value from MBR
-                    gpr3.setRegisterValue(mbr.getRegisterValue());
-            }
-            //Set MBR to value we just fetched
-            setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+        switch (instruction) {
+            case "LDR":
+                executeLDR(effectiveAddress);
+                break;
+            case "LDA":
+                executeLDA(effectiveAddress);
+                break;
+            case "LDX":
+                executeLDX(effectiveAddress);
+                break;
+            case "STR":
+                executeSTR(effectiveAddress);
+                break;
+            case "STX":
+                executeSTX(effectiveAddress);
+                break;
+            case "RFS":
+                executeRFS(effectiveAddress);
+                break;
+            case "JZ":
+                executeJZ(effectiveAddress);
+                break;
+
         }
     }
 
-    public int[] computeEffectiveAddr(int[] instruction){
+    public int[] computeEffectiveAddr(int[] instruction) {
         String strInstruction = Arrays.toString(instruction);
         strInstruction = strInstruction.replace("[", "");
         strInstruction = strInstruction.replace("]", "");
@@ -275,35 +295,33 @@ public class CPU {
 
         //Calculate I
         int I;
-        if (strInstruction.charAt(10) == '0'){
+        if (strInstruction.charAt(10) == '0') {
             I = 0;
-        }else{
+        } else {
             I = 1;
         }
 
         //Calculate R
         int R;
-        if(strInstruction.charAt(6) == '0' && strInstruction.charAt(7) == '0'){
+        if (strInstruction.charAt(6) == '0' && strInstruction.charAt(7) == '0') {
             R = 0;
-        }else if(strInstruction.charAt(6) == '0' && strInstruction.charAt(7) == '1'){
+        } else if (strInstruction.charAt(6) == '0' && strInstruction.charAt(7) == '1') {
             R = 1;
-        }
-        else if(strInstruction.charAt(6) == '1' && strInstruction.charAt(7) == '0'){
+        } else if (strInstruction.charAt(6) == '1' && strInstruction.charAt(7) == '0') {
             R = 2;
-        }else{
+        } else {
             R = 3;
         }
 
         //Calculate IX
         int IX;
-        if(strInstruction.charAt(8) == '0' && strInstruction.charAt(9) == '0'){
+        if (strInstruction.charAt(8) == '0' && strInstruction.charAt(9) == '0') {
             IX = 0;
-        }else if(strInstruction.charAt(8) == '0' && strInstruction.charAt(9) == '1'){
+        } else if (strInstruction.charAt(8) == '0' && strInstruction.charAt(9) == '1') {
             IX = 1;
-        }
-        else if(strInstruction.charAt(8) == '1' && strInstruction.charAt(9) == '0'){
+        } else if (strInstruction.charAt(8) == '1' && strInstruction.charAt(9) == '0') {
             IX = 2;
-        }else{
+        } else {
             IX = 3;
         }
 
@@ -313,25 +331,25 @@ public class CPU {
         //Calculate EA using I,R,IX,and address
         int EA;
         int[] tmp_var;
-        if (I == 0){
-            if (IX == 0){
+        if (I == 0) {
+            if (IX == 0) {
                 //EA is the whole Address Field
                 EA = binaryToInt(addressField);
 
-            }else {
+            } else {
                 //Get IX Register value
                 int ix_value;
-                if (IX == 1){
+                if (IX == 1) {
                     ix_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister1));
-                }else if (IX == 2){
+                } else if (IX == 2) {
                     ix_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
-                }else{
+                } else {
                     ix_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
                 }
                 EA = binaryToInt(addressField) + ix_value;
 
             }
-        }else{
+        } else {
             if (IX == 0) {
                 //Get memory index from Address Field
                 int tmp_var2 = binaryToInt(addressField);
@@ -344,14 +362,14 @@ public class CPU {
                 tmp_var = getMemoryValue(tmp_var2);
                 EA = binaryToInt(tmp_var);
 
-            }else{
+            } else {
                 //Get Value in index register
                 int IX_value;
-                if (IX == 1){
+                if (IX == 1) {
                     IX_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister1));
-                }else if (IX == 2){
+                } else if (IX == 2) {
                     IX_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
-                }else{
+                } else {
                     IX_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
                 }
 
@@ -361,10 +379,162 @@ public class CPU {
                 EA = binaryToInt(getMemoryValue(tmp_var3));
             }
         }
-        int ret[] = {EA,I,R,IX, binaryToInt(addressField)};
+        int ret[] = {EA, I, R, IX, binaryToInt(addressField)};
         return ret;
     }
 
+    private void executeLDR(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        switch (R) {
+            case 0:
+                //Set MBR
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                //Set register value from MBR
+                gpr0.setRegisterValue(mbr.getRegisterValue());
+                break;
+            case 1:
+                //Set MBR to the value to be stored in register
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                //Set register to value from MBR
+                gpr1.setRegisterValue(mbr.getRegisterValue());
+                break;
+            case 2:
+                //Set MBR to the value to be stored in register
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                // Set register to value from MBR
+                gpr2.setRegisterValue(mbr.getRegisterValue());
+                break;
+            default:
+                //Set MBR to the value to be stored in register
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                //Set register to value from MBR
+                gpr3.setRegisterValue(mbr.getRegisterValue());
+        }
+        //Set MBR to value we just fetched
+        setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+    }
+
+    private void executeLDA(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        int[] convertedValue = intToBinaryArray(Integer.toBinaryString(EA));
+        switch (R) {
+            case 0:
+                gpr0.setRegisterValue(convertedValue);
+                break;
+            case 1:
+                gpr1.setRegisterValue(convertedValue);
+                break;
+            case 2:
+                gpr2.setRegisterValue(convertedValue);
+                break;
+            default:
+                gpr3.setRegisterValue(convertedValue);
+        }
+    }
+
+    private void executeSTR(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        switch (R) {
+            case 0:
+                setRegisterValue(RegisterType.MemoryBufferRegister, gpr0.getRegisterValue());
+                setMemoryValue(EA, mbr.getRegisterValue());
+                break;
+            case 1:
+                setRegisterValue(RegisterType.MemoryBufferRegister, gpr1.getRegisterValue());
+                setMemoryValue(EA, mbr.getRegisterValue());
+                break;
+            case 2:
+                setRegisterValue(RegisterType.MemoryBufferRegister, gpr2.getRegisterValue());
+                setMemoryValue(EA, mbr.getRegisterValue());
+                break;
+            default:
+                setRegisterValue(RegisterType.MemoryBufferRegister, gpr3.getRegisterValue());
+                setMemoryValue(EA, mbr.getRegisterValue());
+        }
+
+    }
+
+    private void executeSTX(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        int IX = effectiveAddress[3];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        switch (IX) {
+            case 1:
+                //Set MBR
+                setRegisterValue(RegisterType.MemoryBufferRegister, x1.getRegisterValue());
+                //Store value from MBR
+                setMemoryValue(EA, mbr.getRegisterValue());
+                break;
+            case 2:
+                //Set MBR
+                setRegisterValue(RegisterType.MemoryBufferRegister, x2.getRegisterValue());
+                // Store value from MBR
+                setMemoryValue(EA, mbr.getRegisterValue());
+                break;
+            case 3:
+                //Set MBR
+                setRegisterValue(RegisterType.MemoryBufferRegister, x3.getRegisterValue());
+                //Store value from MBR
+                setMemoryValue(EA, mbr.getRegisterValue());
+                break;
+            default:
+        }
+    }
+
+    private void executeLDX(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        int IX = effectiveAddress[3];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        switch (IX) {
+            case 1:
+                //Set MBR from memory
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                //Load MBR into index register
+                x1.setRegisterValue(mbr.getRegisterValue());
+                break;
+            case 2:
+                //Set MBR from memory
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                //Load MBR into index register
+                x2.setRegisterValue(mbr.getRegisterValue());
+                break;
+            case 3:
+                //Set MBR from memory
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                //Load MBR into index register
+                x2.setRegisterValue(mbr.getRegisterValue());
+                break;
+            default:
+        }
+
+    }
+
+    private void executeRFS(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        gpr0.setRegisterValue(ir.getRegisterValue());
+        pc.setRegisterValue(gpr3.getRegisterValue());
+    }
+
+    private void executeJZ(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+
+        // Check if the E bit of the condition code is 1
+        if (getRegisterValue(RegisterType.ConditionCode)[0] == 1) {
+            // Set the Program Counter (PC) to the specified address
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        } else {
+            // If the E bit is not set, increment the Program Counter (PC) by 1
+            int currentPC = binaryArrayShortToInt(getRegisterValue(RegisterType.ProgramCounter));
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+        }
+    }
 
 
 }

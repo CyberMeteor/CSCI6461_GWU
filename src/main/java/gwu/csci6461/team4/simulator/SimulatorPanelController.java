@@ -1,7 +1,6 @@
 package gwu.csci6461.team4.simulator;
 
 import gwu.csci6461.team4.CPU;
-import gwu.csci6461.team4.Memory;
 import gwu.csci6461.team4.registers.RegisterType;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -14,6 +13,7 @@ import javafx.stage.FileChooser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -26,21 +26,33 @@ import java.util.logging.Logger;
 public class SimulatorPanelController {
 
     private Timeline timeline;
+    boolean runCheck = false;
+
     @FXML
     public void initialize() {
         initComponents();
         cpu = new CPU();
         int[] tempValue = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0};
         cpu.setRegisterValue(RegisterType.ProgramCounter, tempValue);
-        timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> updateRegisters()));
+        timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+            updateRegisters();
+            if (runCheck) {
+                cpu.execute("single");
+                // If running, check if the halt flag is raised
+                if (cpu.getRegisterValue(RegisterType.HLT)[0] == 1) {
+                    runCheck = false;
+                    int[] msg = new int[]{0};
+                    cpu.setRegisterValue(RegisterType.HLT, msg);
+                }
+            }
+        }));
         timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();    }
+        timeline.play();
+    }
 
 
     CPU cpu;
     int[] initialButtonArray = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    Memory mem;
 
     // button onClick() function
     @FXML
@@ -135,23 +147,26 @@ public class SimulatorPanelController {
 
     @FXML
     protected void RunClick() {
-        // TODO add handling code here:
-
+        if (runCheck == false) {
+            runCheck = true;
+        } else {
+            runCheck = false;
+        }
     }
 
     @FXML
     protected void StepClick() {
-        cpu.execute();
+        cpu.execute("single");
     }
 
     @FXML
     protected void HaltClick() {
-        int [] msg = new int[]{1};
-        cpu.setRegisterValue(RegisterType.HLT,msg);
+        int[] msg = new int[]{1};
+        cpu.setRegisterValue(RegisterType.HLT, msg);
     }
 
     @FXML
-    protected void IPLClick(){
+    protected void IPLClick() {
         // Asks for the txt file to be read and once we select the ipl.txt file then it reads the file and loads into memory
 
         // Create a file chooser
@@ -169,12 +184,12 @@ public class SimulatorPanelController {
         File selectedFile = fileChooser.showOpenDialog(null);
 
         //If a file is selected
-        if (selectedFile != null){
+        if (selectedFile != null) {
             //Read the content of the selected file and put it into the memory
             try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
                 String line;
                 int rowNum = 0;
-                while ((line = br.readLine()) != null && rowNum < 2048){
+                while ((line = br.readLine()) != null && rowNum < 2048) {
                     String[] tokens = line.split(" ");
 
                     //Get the address and load into MAR
@@ -189,11 +204,11 @@ public class SimulatorPanelController {
                     cpu.setMemoryValue(row, value);
                     rowNum++;
                 }
-            }catch (IOException ex){
+            } catch (IOException ex) {
                 Logger.getLogger(SimulatorPanelController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        int[] default_PC_loc = new int[]{0,0,0,0,0,0,1,1,0,0,0,0};
+        int[] default_PC_loc = new int[]{0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0};
         cpu.setRegisterValue(RegisterType.ProgramCounter, default_PC_loc);
     }
 
@@ -323,7 +338,6 @@ public class SimulatorPanelController {
 
     @FXML
     private TextField ProgramFileTextField;
-
 
 
     public void initComponents() {

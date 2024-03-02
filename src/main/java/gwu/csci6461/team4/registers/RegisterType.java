@@ -17,7 +17,7 @@ public enum RegisterType {
     ProgramCounter("PC", 12),
     FloatingPointRegister("FR", 16),
     HLT("HLT", 1),
-    ConditionCode("CC", 1);
+    ConditionCode("CC", 4);
 
     private String type;
     private int size;
