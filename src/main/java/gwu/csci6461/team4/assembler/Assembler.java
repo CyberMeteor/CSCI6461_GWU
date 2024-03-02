@@ -14,40 +14,6 @@ public class Assembler {
 
     public Assembler() {
         opCodeMap = new HashMap<>();
-        encodedLocation = "";
-        locToInstructionMap = new LinkedHashMap<>();
-    }
-
-    public void assemble(String opCode, String remaining, String finalLocation) {
-        if(opCode.equals("LOC")){
-            if(!remaining.equals(finalLocation)) {
-                encodedLocation = decimalToOctal(remaining);
-                // first "LOC"
-                locToInstructionMap.put("      ", "      ");
-            } else {
-                encodedLocation = decimalToOctal(finalLocation);
-                // last "LOC"
-                locToInstructionMap.put("       ", "     ");
-            }
-        }
-
-        else{
-            String encodedOpCode = encodeOpCode(opCode);
-            String encodedRemaining = encodeRemaining(opCode, remaining, finalLocation);
-            String encodedInstruction = binToOctal(encodedOpCode + encodedRemaining);
-            encodedInstruction = String.format("%06d", Integer.parseInt(encodedInstruction));
-            locToInstructionMap.put(encodedLocation, encodedInstruction);
-            int decimalLocation = Integer.parseInt(encodedLocation,8);
-            decimalLocation++;
-            encodedLocation = decimalToOctal(String.valueOf(decimalLocation));
-        }
-        //Putting zeros at the beginning if the length is smaller than 6
-        encodedLocation = String.format("%06d", Integer.parseInt(encodedLocation));
-    }
-
-    // Define the dictionary of Opcode using HasMap
-    private String encodeOpCode(String opCode) {
-        opCodeMap = new HashMap<>();
         opCodeMap.put("HLT", "000000");
         opCodeMap.put("LDR", "000001");
         opCodeMap.put("STR", "000010");
@@ -87,6 +53,39 @@ public class Assembler {
         opCodeMap.put("SETCCE", "100100");
         opCodeMap.put("TRAP", "100101");
         opCodeMap.put("LOC", "");
+        encodedLocation = "";
+        locToInstructionMap = new LinkedHashMap<>();
+    }
+
+    public void assemble(String opCode, String remaining, String finalLocation) {
+        if(opCode.equals("LOC")){
+            if(!remaining.equals(finalLocation)) {
+                encodedLocation = decimalToOctal(remaining);
+                // first "LOC"
+                locToInstructionMap.put("      ", "      ");
+            } else {
+                encodedLocation = decimalToOctal(finalLocation);
+                // last "LOC"
+                locToInstructionMap.put("       ", "     ");
+            }
+        }
+
+        else{
+            String encodedOpCode = encodeOpCode(opCode);
+            String encodedRemaining = encodeRemaining(opCode, remaining, finalLocation);
+            String encodedInstruction = binToOctal(encodedOpCode + encodedRemaining);
+            encodedInstruction = String.format("%06d", Integer.parseInt(encodedInstruction));
+            locToInstructionMap.put(encodedLocation, encodedInstruction);
+            int decimalLocation = Integer.parseInt(encodedLocation,8);
+            decimalLocation++;
+            encodedLocation = decimalToOctal(String.valueOf(decimalLocation));
+        }
+        //Putting zeros at the beginning if the length is smaller than 6
+        encodedLocation = String.format("%06d", Integer.parseInt(encodedLocation));
+    }
+
+    // Define the dictionary of Opcode using HasMap
+    private String encodeOpCode(String opCode) {
         return opCodeMap.getOrDefault(opCode,"000000");
     }
 

@@ -192,7 +192,7 @@ public class CPU {
         }
     }
 
-    public void execute (String opType) {
+    public void execute () {
         //We first get the instruction location and save it to IR from PC
         int[] instructionAddress = getRegisterValue(RegisterType.ProgramCounter);
         int intAddress = binaryToInt(instructionAddress);
@@ -206,11 +206,11 @@ public class CPU {
         setRegisterValue(RegisterType.ProgramCounter, latestPC);
 
         //Read and decode instruction
-        int[] instructionBinary = getMemoryValue(intAddress);
+        int[]instructionBinary = getMemoryValue(intAddress);
         int[] opCode = Arrays.copyOfRange(instructionBinary, 0, 6);
         String instruction = decodeOPCode(opCode);
-
-
+        int[] result = computeEffectiveAddr(instructionBinary);
+        executeInstruction(instruction,result);
 
     }
 
@@ -220,6 +220,7 @@ public class CPU {
         opCode = opCode.replace("]", "");
         opCode = opCode.replace(",", "");
         opCode = opCode.replace(" ", "");
+        System.out.println("OpCode is : " + opCode);
         Assembler assembler = new Assembler();
         for (Map.Entry<String, String> entry : assembler.getOpCodeMap().entrySet()) {
             if (opCode.equals(entry.getValue())) {
@@ -228,5 +229,142 @@ public class CPU {
         }
         return "";
     }
+
+    private void executeInstruction(String instruction, int[] effectiveAddress) {
+
+        if(instruction.equals("LDR")){
+            int EA = effectiveAddress[0];
+            int R= effectiveAddress[2];
+            setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+            switch(R) {
+                case 0:
+                    //Set MBR
+                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                    //Set register value from MBR
+                    gpr0.setRegisterValue(mbr.getRegisterValue());
+                    break;
+                case 1:
+                    //Set MBR to the value to be stored in register
+                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                    //Set register to value from MBR
+                    gpr1.setRegisterValue(mbr.getRegisterValue());
+                    break;
+                case 2:
+                    //Set MBR to the value to be stored in register
+                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                    // Set register to value from MBR
+                    gpr2.setRegisterValue(mbr.getRegisterValue());
+                    break;
+                default:
+                    //Set MBR to the value to be stored in register
+                    setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                    //Set register to value from MBR
+                    gpr3.setRegisterValue(mbr.getRegisterValue());
+            }
+            //Set MBR to value we just fetched
+            setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+        }
+    }
+
+    public int[] computeEffectiveAddr(int[] instruction){
+        String strInstruction = Arrays.toString(instruction);
+        strInstruction = strInstruction.replace("[", "");
+        strInstruction = strInstruction.replace("]", "");
+        strInstruction = strInstruction.replace(",", "");
+        strInstruction = strInstruction.replace(" ", "");
+
+        //Calculate I
+        int I;
+        if (strInstruction.charAt(10) == '0'){
+            I = 0;
+        }else{
+            I = 1;
+        }
+
+        //Calculate R
+        int R;
+        if(strInstruction.charAt(6) == '0' && strInstruction.charAt(7) == '0'){
+            R = 0;
+        }else if(strInstruction.charAt(6) == '0' && strInstruction.charAt(7) == '1'){
+            R = 1;
+        }
+        else if(strInstruction.charAt(6) == '1' && strInstruction.charAt(7) == '0'){
+            R = 2;
+        }else{
+            R = 3;
+        }
+
+        //Calculate IX
+        int IX;
+        if(strInstruction.charAt(8) == '0' && strInstruction.charAt(9) == '0'){
+            IX = 0;
+        }else if(strInstruction.charAt(8) == '0' && strInstruction.charAt(9) == '1'){
+            IX = 1;
+        }
+        else if(strInstruction.charAt(8) == '1' && strInstruction.charAt(9) == '0'){
+            IX = 2;
+        }else{
+            IX = 3;
+        }
+
+        //Calculate Address Field
+        int[] addressField = Arrays.copyOfRange(instruction, 11, 16);
+
+        //Calculate EA using I,R,IX,and address
+        int EA;
+        int[] tmp_var;
+        if (I == 0){
+            if (IX == 0){
+                //EA is the whole Address Field
+                EA = binaryToInt(addressField);
+
+            }else {
+                //Get IX Register value
+                int ix_value;
+                if (IX == 1){
+                    ix_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister1));
+                }else if (IX == 2){
+                    ix_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
+                }else{
+                    ix_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
+                }
+                EA = binaryToInt(addressField) + ix_value;
+
+            }
+        }else{
+            if (IX == 0) {
+                //Get memory index from Address Field
+                int tmp_var2 = binaryToInt(addressField);
+
+                tmp_var = getMemoryValue(tmp_var2);
+
+                //Get address value from earlier address
+                tmp_var2 = binaryToInt(tmp_var);
+
+                tmp_var = getMemoryValue(tmp_var2);
+                EA = binaryToInt(tmp_var);
+
+            }else{
+                //Get Value in index register
+                int IX_value;
+                if (IX == 1){
+                    IX_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister1));
+                }else if (IX == 2){
+                    IX_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
+                }else{
+                    IX_value = binaryToInt(getRegisterValue(RegisterType.IndexRegister2));
+                }
+
+                int tmp_var2 = binaryToInt(addressField);
+                //Get memory location of EA
+                int tmp_var3 = tmp_var2 + IX_value;
+                EA = binaryToInt(getMemoryValue(tmp_var3));
+            }
+        }
+        int ret[] = {EA,I,R,IX, binaryToInt(addressField)};
+        return ret;
+    }
+
+
 
 }

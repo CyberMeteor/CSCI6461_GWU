@@ -17,6 +17,7 @@ import java.io.FileReader;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -140,7 +141,7 @@ public class SimulatorPanelController {
 
     @FXML
     protected void StepClick() {
-        cpu.execute("singleStep");
+        cpu.execute();
     }
 
     @FXML
@@ -333,30 +334,43 @@ public class SimulatorPanelController {
             // Convert octal input to binary
             String binaryOutput = octalToBinary(octalInput);
 
-            for (int i = 0; i < binaryOutput.length(); i++) {
+            // Ensure binaryOutput is exactly 16 characters long
+            if (binaryOutput.length() < 16) {
+                binaryOutput = "0".repeat(16 - binaryOutput.length()) + binaryOutput;
+            }
+
+            for (int i = 0; i < 16; i++) {
                 initialButtonArray[i] = Character.getNumericValue(binaryOutput.charAt(i));
             }
 
             BinaryTextField.setText(formatText(initialButtonArray));
         });
+
+        BinaryTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() < 16) {
+                newValue = "0".repeat(16 - newValue.length()) + newValue;
+            }
+
+            for (int i = 0; i < 16; i++) {
+                initialButtonArray[i] = Character.getNumericValue(newValue.charAt(i));
+            }
+        });
     }
 
+
     private String octalToBinary(String octalInput) {
-        // Convert octal string to binary string
-        StringBuilder binaryString = new StringBuilder();
-        for (int i = 0; i < octalInput.length(); i++) {
-            char octalChar = octalInput.charAt(i);
-            int octalDigit = Character.digit(octalChar, 8); // Use base 8 (octal)
-            String binaryDigit = String.format("%03d", Integer.parseInt(Integer.toBinaryString(octalDigit)));
-            binaryString.append(binaryDigit);
-        }
+        // Convert octal input to decimal first
+        String decimalInput = Integer.toString(Integer.parseInt(octalInput, 8));
 
-        // Pad with zeros to make it 16 bits
-        while (binaryString.length() < 16) {
-            binaryString.insert(0, "0");
-        }
+        // Convert decimal to binary using the decimalToBinary method
+        return decimalToBinary(decimalInput);
+    }
 
-        return binaryString.toString();
+    private String decimalToBinary(String decimalAddress) {
+        if (decimalAddress == null) {
+            decimalAddress = "0";
+        }
+        return new BigInteger(decimalAddress, 10).toString(2);
     }
 
     public void updateRegisters() {
