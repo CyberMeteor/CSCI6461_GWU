@@ -360,6 +360,26 @@ public class SimulatorPanelController {
             BinaryTextField.setText(formatText(initialButtonArray));
         });
 
+        BinaryTextField.setOnAction(event -> {
+            // Get the binary input from the BINARY text field
+            String binaryInput = BinaryTextField.getText();
+
+            for (int i = 0; i < 16; i++) {
+                initialButtonArray[i] = Character.getNumericValue(binaryInput.charAt(i));
+            }
+
+            // Convert binary input to octal
+            String octalOutput = binaryToOctal(binaryInput);
+
+            // Ensure octalOutput is exactly 6 characters long
+            if (octalOutput.length() < 16) {
+                octalOutput = "0".repeat(6 - octalOutput.length()) +octalOutput;
+            }
+
+            OctalInputTextField.setText(octalOutput);
+
+        });
+
     }
 
 
@@ -376,6 +396,16 @@ public class SimulatorPanelController {
             decimalAddress = "0";
         }
         return new BigInteger(decimalAddress, 10).toString(2);
+    }
+
+    private String binaryToOctal(String binaryInput) {
+        // Convert binary input to decimal first
+        int decimalInput = Integer.parseInt(binaryInput, 2);
+
+        // Convert decimal to octal
+        String octalOutput = Integer.toOctalString(decimalInput);
+
+        return octalOutput;
     }
 
     public void updateRegisters() {
