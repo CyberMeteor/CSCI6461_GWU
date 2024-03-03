@@ -4,6 +4,7 @@ import gwu.csci6461.team4.assembler.Assembler;
 import gwu.csci6461.team4.registers.Register;
 import gwu.csci6461.team4.registers.RegisterType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -15,16 +16,24 @@ public class CPU {
     Register x1 = new Register(16);
     Register x2 = new Register(16);
     Register x3 = new Register(16);
+    ArrayList<Register> IXRList = new ArrayList<Register>();
     Register gpr0 = new Register(16);
     Register gpr1 = new Register(16);
     Register gpr2 = new Register(16);
     Register gpr3 = new Register(16);
+    ArrayList<Register> GPRList = new ArrayList<Register>();
     Register cc = new Register(4);
     Register ir = new Register(16);
     Register mfr = new Register(4);
     Register hlt = new Register(1);
 
     Memory mem = new Memory();
+
+    public CPU(){
+        GPRList.add(gpr0); GPRList.add(gpr1); GPRList.add(gpr2); GPRList.add(gpr3);
+        IXRList.add(x1); IXRList.add(x2); IXRList.add(x3);
+    }
+
 
     public void setRegisterValue(RegisterType registerType, int[] value) {
         if (registerType.getType().equals("MAR")) {
@@ -282,6 +291,18 @@ public class CPU {
             case "JZ":
                 executeJZ(effectiveAddress);
                 break;
+            case "TRR":
+                executeTRR(effectiveAddress);
+                break;
+            case "AND":
+                executeAND(effectiveAddress);
+                break;
+            case "ORR":
+                executeORR(effectiveAddress);
+                break;
+            case "NOT":
+                executeNOT(effectiveAddress);
+                break;
 
         }
     }
@@ -534,6 +555,78 @@ public class CPU {
             int currentPC = binaryArrayShortToInt(getRegisterValue(RegisterType.ProgramCounter));
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
         }
+    }
+
+    private void executeTRR(int[] effectiveAddress) {
+        int rx = effectiveAddress[2];
+        int ry = effectiveAddress[2];
+
+        int[] contentRx = GPRList.get(rx).getRegisterValue();
+        int[] contentRy = GPRList.get(ry).getRegisterValue();
+        int[] currentValue = cc.getRegisterValue();
+
+        // Compare each element of the arrays
+        boolean allSame = true;
+        for (int i = 0; i < contentRx.length; i++) {
+            if (contentRx[i] != contentRy[i]) {
+                allSame = false;
+                break; // No need to continue checking if any element is different
+            }
+        }
+
+        if (allSame) {
+            //cc(4) = 1
+            currentValue[3] = 1;
+        } else {
+            //cc(4) = 0
+            currentValue[3] = 0;
+        }
+        cc.setRegisterValue(currentValue);
+    }
+
+    private void executeAND(int[] effectiveAddress) {
+        int rx = effectiveAddress[2];
+        int ry = effectiveAddress[2];
+
+        int[] contentRx = GPRList.get(rx).getRegisterValue();
+        int[] contentRy = GPRList.get(ry).getRegisterValue();
+
+        // Perform bitwise AND operation element-wise
+        int[] result = new int[16];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = contentRx[i] & contentRy[i];
+        }
+
+        GPRList.get(rx).setRegisterValue(result);
+    }
+
+    private void executeORR(int[] effectiveAddress) {
+        int rx = effectiveAddress[2];
+        int ry = effectiveAddress[2];
+
+        int[] contentRx = GPRList.get(rx).getRegisterValue();
+        int[] contentRy = GPRList.get(ry).getRegisterValue();
+
+        // Perform bitwise AND operation element-wise
+        int[] result = new int[16];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = contentRx[i] | contentRy[i];
+        }
+
+        GPRList.get(rx).setRegisterValue(result);
+    }
+
+    private void executeNOT(int[] effectiveAddress) {
+        int rx = effectiveAddress[2];
+        int[] contentRx = GPRList.get(rx).getRegisterValue();
+
+        // Perform bitwise NOT operation element-wise
+        int[] result = new int[16];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = ~contentRx[i];
+        }
+
+        GPRList.get(rx).setRegisterValue(result);
     }
 
 
