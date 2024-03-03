@@ -360,15 +360,6 @@ public class SimulatorPanelController {
             BinaryTextField.setText(formatText(initialButtonArray));
         });
 
-        BinaryTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.length() < 16) {
-                newValue = "0".repeat(16 - newValue.length()) + newValue;
-            }
-
-            for (int i = 0; i < 16; i++) {
-                initialButtonArray[i] = Character.getNumericValue(newValue.charAt(i));
-            }
-        });
     }
 
 
