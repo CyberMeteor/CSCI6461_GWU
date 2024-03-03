@@ -206,6 +206,28 @@ public class CPU {
         return value;
     }
 
+    // Right shift the register by count
+    public String rightShift(String bitValue, int count, int ALvalue) {
+        char sign;
+        if (ALvalue == 0) {
+            sign = bitValue.charAt(0);
+        }else {
+            sign = '0';
+        }
+        for (int i = 0; i < count; i++) {
+            bitValue = sign + bitValue.substring(0, gpr0.getRegisterSize() - 1);
+        }
+        return bitValue;
+    }
+
+    // Left shift the register by count
+    public String leftShift(String bitValue, int count) {
+        for (int i = 0; i < count; i++) {
+            bitValue = bitValue.substring(1, gpr0.getRegisterSize()) + "0";
+        }
+        return bitValue;
+    }
+
     //Returns the memory value
     public int[] getMemoryValue(int row) {
         if (row < 6) {
@@ -303,6 +325,12 @@ public class CPU {
             case "NOT":
                 executeNOT(effectiveAddress);
                 break;
+            case "SRC":
+                executeSRC(effectiveAddress);
+                break;
+            case "RRC":
+                executeRRC(effectiveAddress);
+                break;
 
         }
     }
@@ -344,6 +372,22 @@ public class CPU {
             IX = 2;
         } else {
             IX = 3;
+        }
+
+        //Calculate logically (A/L = 1) or arithmetically (A/L = 0)
+        int AL;
+        if (strInstruction.charAt(8) == '0') {
+            AL = 0;
+        } else {
+            AL = 1;
+        }
+
+        //Calculate shifted left (L/R = 1) or right (L/R = 0)
+        int LR;
+        if (strInstruction.charAt(9) == '0') {
+            LR = 0;
+        } else {
+            LR = 1;
         }
 
         //Calculate Address Field
@@ -400,7 +444,7 @@ public class CPU {
                 EA = binaryToInt(getMemoryValue(tmp_var3));
             }
         }
-        int ret[] = {EA, I, R, IX, binaryToInt(addressField)};
+        int ret[] = {EA, I, R, IX, binaryToInt(addressField), AL, LR};
         return ret;
     }
 
@@ -627,6 +671,56 @@ public class CPU {
         }
 
         GPRList.get(rx).setRegisterValue(result);
+    }
+
+    private void executeSRC(int[] effectiveAddress) {
+        int R = effectiveAddress[2];
+        String contentR = GPRList.get(R).getStringValue();
+        int count = effectiveAddress[4];
+        int AL = effectiveAddress[5];
+        int LR = effectiveAddress[6];
+
+        String result = "";
+        if (LR == 0) {	//right shift
+            result = rightShift(contentR, count, AL);
+        }else {	//left shift
+            result = leftShift(contentR, count);
+        }
+
+        // Transform result from String to int[]
+        int[] resultArr = new int[result.length()];
+        for (int i = 0; i < result.length(); i++) {
+            resultArr[i] = Character.getNumericValue(result.charAt(i));
+        }
+
+        GPRList.get(R).setRegisterValue(resultArr);
+    }
+
+    private void executeRRC(int[] effectiveAddress) {
+        int R = effectiveAddress[2];
+        String contentR = GPRList.get(R).getStringValue();
+        int count = effectiveAddress[4];
+        int LR = effectiveAddress[6];
+        int rSize = GPRList.get(R).getRegisterSize();
+
+        String result = "";
+        if (LR == 0) {	//right rotate
+            for (int i = 0; i < count; i++) {
+                result = contentR.charAt(rSize - 1) + contentR.substring(0, rSize - 1);
+            }
+        }else {	//left rotate
+            for (int i = 0; i < count; i++) {
+                result = contentR.substring(1) + contentR.charAt(0);
+            }
+        }
+
+        // Transform result from String to int[]
+        int[] resultArr = new int[result.length()];
+        for (int i = 0; i < result.length(); i++) {
+            resultArr[i] = Character.getNumericValue(result.charAt(i));
+        }
+
+        GPRList.get(R).setRegisterValue(resultArr);
     }
 
 

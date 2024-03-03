@@ -14,6 +14,14 @@ public class Register {
         return registerValue;
     }
 
+    public String getStringValue() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < registerSize; i++) {
+            stringBuilder.append(registerValue[i]);
+        }
+        return stringBuilder.toString();
+    }
+
     public int getRegisterSize(){
         return registerSize;
     }
