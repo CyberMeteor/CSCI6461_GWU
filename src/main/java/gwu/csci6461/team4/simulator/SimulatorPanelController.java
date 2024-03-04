@@ -52,57 +52,58 @@ public class SimulatorPanelController {
 
 
     CPU cpu;
-    int[] initialButtonArray = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int[] initialArray = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     // button onClick() function
     @FXML
     protected void GPR0LoadClick() {
-        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister0, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister0, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
     protected void GPR1LoadClick() {
-        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister1, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister1, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
     protected void GPR2LoadClick() {
-        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister2, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister2, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
     protected void GPR3LoadClick() {
-        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister3, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.GeneralPurposeRegister3, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
     protected void IXR1LoadClick() {
-        cpu.setRegisterValue(RegisterType.IndexRegister1, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.IndexRegister1, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
     protected void IXR2LoadClick() {
-        cpu.setRegisterValue(RegisterType.IndexRegister2, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.IndexRegister2, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
     protected void IXR3LoadClick() {
-        cpu.setRegisterValue(RegisterType.IndexRegister3, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.IndexRegister3, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
     protected void PCLoadClick() {
-        cpu.setRegisterValue(RegisterType.ProgramCounter, Arrays.copyOfRange(initialButtonArray, 4, 16));
+        cpu.setRegisterValue(RegisterType.ProgramCounter, Arrays.copyOfRange(initialArray, 4, 16));
     }
 
     @FXML
     protected void MARLoadClick() {
-        cpu.setRegisterValue(RegisterType.MemoryAddressRegister, Arrays.copyOfRange(initialButtonArray, 4, 16));
+        int[] deneme = initialArray;
+        cpu.setRegisterValue(RegisterType.MemoryAddressRegister, Arrays.copyOfRange(initialArray, 4, 16));
     }
 
     @FXML
     protected void MBRLoadClick() {
-        cpu.setRegisterValue(RegisterType.MemoryBufferRegister, Arrays.copyOfRange(initialButtonArray, 0, 16));
+        cpu.setRegisterValue(RegisterType.MemoryBufferRegister, Arrays.copyOfRange(initialArray, 0, 16));
     }
 
     @FXML
@@ -342,8 +343,8 @@ public class SimulatorPanelController {
 
     public void initComponents() {
         OctalInputTextField.setOnAction(event -> {
-            // Get the octal input from the octal text field
-            String octalInput = OctalInputTextField.getText();
+            // Get the octal input from the octal text field and remove spaces
+            String octalInput = OctalInputTextField.getText().replaceAll("\\s", "");
 
             // Convert octal input to binary
             String binaryOutput = octalToBinary(octalInput);
@@ -354,34 +355,39 @@ public class SimulatorPanelController {
             }
 
             for (int i = 0; i < 16; i++) {
-                initialButtonArray[i] = Character.getNumericValue(binaryOutput.charAt(i));
+                initialArray[i] = Character.getNumericValue(binaryOutput.charAt(i));
             }
 
-            BinaryTextField.setText(formatText(initialButtonArray));
+            BinaryTextField.setText(formatText(initialArray));
         });
 
         BinaryTextField.setOnAction(event -> {
-            // Get the binary input from the BINARY text field
-            String binaryInput = BinaryTextField.getText();
+            // Get the binary input from the BINARY text field and remove spaces
+            String binaryInput = BinaryTextField.getText().replaceAll("\\s", "");
 
-            for (int i = 0; i < 16; i++) {
-                initialButtonArray[i] = Character.getNumericValue(binaryInput.charAt(i));
+            // Pad the binary input with zeros at the beginning if it's shorter than 16 bits
+            while (binaryInput.length() < 16) {
+                binaryInput = "0" + binaryInput;
             }
 
             // Convert binary input to octal
             String octalOutput = binaryToOctal(binaryInput);
 
-            // Ensure octalOutput is exactly 6 characters long
-            if (octalOutput.length() < 16) {
-                octalOutput = "0".repeat(6 - octalOutput.length()) +octalOutput;
+            // Ensure octalOutput is exactly 6 characters long by trimming or adding zeros at the beginning
+            if (octalOutput.length() < 6) {
+                octalOutput = "0".repeat(6 - octalOutput.length()) + octalOutput;
+            } else if (octalOutput.length() > 6) {
+                octalOutput = octalOutput.substring(octalOutput.length() - 6);
             }
 
             OctalInputTextField.setText(octalOutput);
 
+            // Set the binary input to the initialArray
+            for (int i = 0; i < 16; i++) {
+                initialArray[i] = i < binaryInput.length() ? Character.getNumericValue(binaryInput.charAt(i)) : 0;
+            }
         });
-
     }
-
 
     private String octalToBinary(String octalInput) {
         // Convert octal input to decimal first
