@@ -198,7 +198,7 @@ public class CPU {
         return ret_val;
     }
 
-    public int binaryArrayShortToInt(int[] binaryArray) {
+    public int binaryArrayToInt(int[] binaryArray) {
         int value = 0;
         for (int i = 0; i < binaryArray.length; i++) {
             value = (value << 1) + binaryArray[i];
@@ -312,6 +312,18 @@ public class CPU {
                 break;
             case "JZ":
                 executeJZ(effectiveAddress);
+                break;
+            case "AMR":
+                executeAMR(effectiveAddress);
+                break;
+            case "SMR":
+                executeSMR(effectiveAddress);
+                break;
+            case "AIR":
+                executeAIR(effectiveAddress);
+                break;
+            case "SIR":
+                executeSIR(effectiveAddress);
                 break;
             case "TRR":
                 executeTRR(effectiveAddress);
@@ -596,9 +608,62 @@ public class CPU {
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
         } else {
             // If the E bit is not set, increment the Program Counter (PC) by 1
-            int currentPC = binaryArrayShortToInt(getRegisterValue(RegisterType.ProgramCounter));
+            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
         }
+    }
+
+    private void executeAMR(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+
+        //Get value from Instruction Register
+//        int irGetGPR1 = ir.getRegisterValue()[6];
+//        int irGetGPR2 = ir.getRegisterValue()[7];
+//        String irGetGPRStr = String.valueOf(irGetGPR1) + String.valueOf(irGetGPR2);
+//        int irGetGPR = Integer.parseInt(irGetGPRStr, 2);
+//        int[] GPRValue = GPRList.get(irGetGPR).getRegisterValue();
+
+        int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
+        int x = RValue + EA;
+        int[] result = intToBinaryArray(Integer.toString(x));
+        int[] currentCCValue = cc.getRegisterValue();
+
+        if(x > 32767) {
+            currentCCValue[0] = 1;
+            cc.setRegisterValue(currentCCValue);
+        }
+        else {
+            GPRList.get(R).setRegisterValue(result);
+        }
+    }
+
+    private void executeSMR(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+
+        int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
+        int x = RValue - EA;
+        int[] result = intToBinaryArray(Integer.toString(x));
+        int[] currentCCValue = cc.getRegisterValue();
+
+        if(x < -32768) {
+            currentCCValue[1] = 1;
+            cc.setRegisterValue(currentCCValue);
+        }
+        else {
+            GPRList.get(R).setRegisterValue(result);
+        }
+    }
+
+    private void executeAIR(int[] effectiveAddress) {
+        // TODO AIR instruction
+        return;
+    }
+
+    private void executeSIR(int[] effectiveAddress) {
+        // TODO SIR instruction
+        return;
     }
 
     private void executeTRR(int[] effectiveAddress) {
