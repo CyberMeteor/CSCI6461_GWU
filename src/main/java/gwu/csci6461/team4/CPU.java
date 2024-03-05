@@ -616,6 +616,7 @@ public class CPU {
     private void executeAMR(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
         int R = effectiveAddress[2];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
 
         //Get value from Instruction Register
 //        int irGetGPR1 = ir.getRegisterValue()[6];
@@ -641,6 +642,7 @@ public class CPU {
     private void executeSMR(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
         int R = effectiveAddress[2];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
 
         int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
         int x = RValue - EA;
@@ -657,13 +659,47 @@ public class CPU {
     }
 
     private void executeAIR(int[] effectiveAddress) {
-        // TODO AIR instruction
-        return;
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+
+        int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
+        int immed = binaryArrayToInt(ir.getRegisterValue());
+        int x = RValue + immed;
+        int[] result = intToBinaryArray(Integer.toString(x));
+        int[] currentCCValue = cc.getRegisterValue();
+        if(immed != 0) {
+            if (x > 32767) {
+                currentCCValue[0] = 1;
+                cc.setRegisterValue(currentCCValue);
+            }else {
+                if (RValue == 0) {  //if c(r) = 0, loads r with Immed
+                    GPRList.get(R).setRegisterValue(result);
+                }
+            }
+        }
     }
 
     private void executeSIR(int[] effectiveAddress) {
-        // TODO SIR instruction
-        return;
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+
+        int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
+        int immed = binaryArrayToInt(ir.getRegisterValue());
+        int x = RValue - immed;
+        int[] result = intToBinaryArray(Integer.toString(x));
+        int[] currentCCValue = cc.getRegisterValue();
+        if(immed != 0) {
+            if (x < -32768) {
+                currentCCValue[1] = 1;
+                cc.setRegisterValue(currentCCValue);
+            }else {
+                if (RValue == 0) {  //if c(r) = 0, loads r1 with –(Immed)
+                    GPRList.get(R).setRegisterValue(result);
+                }
+            }
+        }
     }
 
     private void executeTRR(int[] effectiveAddress) {
