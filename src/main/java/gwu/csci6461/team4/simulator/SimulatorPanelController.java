@@ -186,6 +186,9 @@ public class SimulatorPanelController {
 
         //If a file is selected
         if (selectedFile != null) {
+            // Set the path of the selected file to the ProgramFileTextField
+            ProgramFileTextField.setText(selectedFile.getAbsolutePath());
+
             //Read the content of the selected file and put it into the memory
             try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
                 String line;
