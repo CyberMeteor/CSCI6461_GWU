@@ -307,11 +307,29 @@ public class CPU {
             case "STX":
                 executeSTX(effectiveAddress);
                 break;
+            case "JZ":
+                executeJZ(effectiveAddress);
+                break;
+            case "JNE":
+                executeJNE(effectiveAddress);
+                break;
+            case "JCC":
+                executeJCC(effectiveAddress);
+                break;
+            case "JMA":
+                executeJMA(effectiveAddress);
+                break;
+            case "JSR":
+                executeJSR(effectiveAddress);
+                break;
             case "RFS":
                 executeRFS(effectiveAddress);
                 break;
-            case "JZ":
-                executeJZ(effectiveAddress);
+            case "SOB":
+                executeSOB(effectiveAddress);
+                break;
+            case "JRE":
+                executeJGE(effectiveAddress);
                 break;
             case "AMR":
                 executeAMR(effectiveAddress);
@@ -602,8 +620,8 @@ public class CPU {
     private void executeJZ(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
 
-        // Check if the E bit of the condition code is 1
-        if (getRegisterValue(RegisterType.ConditionCode)[0] == 1) {
+        // Check if the E bit cc(3) of the condition code is 1
+        if (getRegisterValue(RegisterType.ConditionCode)[3] == 1) {
             // Set the Program Counter (PC) to the specified address
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
         } else {
@@ -611,6 +629,44 @@ public class CPU {
             int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
         }
+    }
+
+    private void executeJNE(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+
+        // Check if the E bit cc(3) of the condition code is 0
+        if (getRegisterValue(RegisterType.ConditionCode)[3] == 0) {
+            // Set the Program Counter (PC) to the specified address
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        } else {
+            // If the E bit is not set, increment the Program Counter (PC) by 1
+            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+        }
+    }
+
+    private void executeJCC(int[] effectiveAddress) {
+        return;
+    }
+
+    private void executeJMA(int[] effectiveAddress) {
+        int EA = effectiveAddress[0];
+
+        // Unconditional Jump
+        // Set the Program Counter (PC) to the specified address
+        setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+    }
+
+    private void executeJSR(int[] effectiveAddress) {
+        return;
+    }
+
+    private void executeSOB(int[] effectiveAddress) {
+        return;
+    }
+
+    private void executeJGE(int[] effectiveAddress) {
+        return;
     }
 
     private void executeAMR(int[] effectiveAddress) {
@@ -631,7 +687,7 @@ public class CPU {
         int[] currentCCValue = cc.getRegisterValue();
 
         if(x > 32767) {
-            currentCCValue[0] = 1;
+            currentCCValue[0] = 1;   // overflow, condition code cc(0) -> 1
             cc.setRegisterValue(currentCCValue);
         }
         else {
@@ -650,7 +706,7 @@ public class CPU {
         int[] currentCCValue = cc.getRegisterValue();
 
         if(x < -32768) {
-            currentCCValue[1] = 1;
+            currentCCValue[1] = 1;      // underflow, condition code cc(1) -> 1
             cc.setRegisterValue(currentCCValue);
         }
         else {
@@ -670,7 +726,7 @@ public class CPU {
         int[] currentCCValue = cc.getRegisterValue();
         if(immed != 0) {
             if (x > 32767) {
-                currentCCValue[0] = 1;
+                currentCCValue[0] = 1;      // overflow, condition code cc(0) -> 1
                 cc.setRegisterValue(currentCCValue);
             }else {
                 if (RValue == 0) {  //if c(r) = 0, loads r with Immed
@@ -691,7 +747,7 @@ public class CPU {
         int[] result = intToBinaryArray(Integer.toString(x));
         int[] currentCCValue = cc.getRegisterValue();
         if(immed != 0) {
-            if (x < -32768) {
+            if (x < -32768) {       // underflow, condition code cc(1) -> 1
                 currentCCValue[1] = 1;
                 cc.setRegisterValue(currentCCValue);
             }else {
@@ -720,10 +776,10 @@ public class CPU {
         }
 
         if (allSame) {
-            //cc(4) = 1
+            // equal-or-not cc(4) -> 1
             currentValue[3] = 1;
         } else {
-            //cc(4) = 0
+            // equal-or-not cc(4) -> 0
             currentValue[3] = 0;
         }
         cc.setRegisterValue(currentValue);
