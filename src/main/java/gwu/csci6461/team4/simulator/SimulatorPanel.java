@@ -9,8 +9,14 @@ import javafx.stage.Stage;
 public class SimulatorPanel extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Load the FXML file
         Parent root = FXMLLoader.load(getClass().getResource("/view/FrontPanel.fxml"));
-        primaryStage.setScene(new Scene(root));
+        // Create a scene
+        Scene scene = new Scene(root);
+        // Add CSS file to the scene
+        scene.getStylesheets().add(getClass().getResource("/styles/PanelStyle.css").toExternalForm());
+
+        primaryStage.setScene(scene);
         primaryStage.setTitle("Simulator");
         primaryStage.show();
     }
