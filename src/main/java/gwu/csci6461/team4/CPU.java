@@ -4,6 +4,7 @@ import gwu.csci6461.team4.assembler.Assembler;
 import gwu.csci6461.team4.registers.Register;
 import gwu.csci6461.team4.registers.RegisterType;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -26,8 +27,8 @@ public class CPU {
     Register ir = new Register(16);
     Register mfr = new Register(4);
     Register hlt = new Register(1);
-
     Memory mem = new Memory();
+    private BigInteger maxINT = BigInteger.valueOf((long) Math.pow(2, 16));
 
     public CPU(){
         GPRList.add(gpr0); GPRList.add(gpr1); GPRList.add(gpr2); GPRList.add(gpr3);
@@ -626,7 +627,7 @@ public class CPU {
     private void executeJZ(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
 
-        // Check if the E bit cc(3) of the condition code is 1
+        // Check if the E bit cc(4) of the condition code is 1
         if (getRegisterValue(RegisterType.ConditionCode)[3] == 1) {
             // Set the Program Counter (PC) to the specified address
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
@@ -731,7 +732,7 @@ public class CPU {
         int[] currentCCValue = cc.getRegisterValue();
 
         if(x > 32767) {
-            currentCCValue[0] = 1;   // overflow, condition code cc(0) -> 1
+            currentCCValue[0] = 1;   // overflow, condition code cc(1) -> 1
             cc.setRegisterValue(currentCCValue);
         }
         else {
@@ -750,7 +751,7 @@ public class CPU {
         int[] currentCCValue = cc.getRegisterValue();
 
         if(x < -32768) {
-            currentCCValue[1] = 1;      // underflow, condition code cc(1) -> 1
+            currentCCValue[1] = 1;      // underflow, condition code cc(2) -> 1
             cc.setRegisterValue(currentCCValue);
         }
         else {
@@ -770,7 +771,7 @@ public class CPU {
         int[] currentCCValue = cc.getRegisterValue();
         if(immed != 0) {
             if (x > 32767) {
-                currentCCValue[0] = 1;      // overflow, condition code cc(0) -> 1
+                currentCCValue[0] = 1;      // overflow, condition code cc(1) -> 1
                 cc.setRegisterValue(currentCCValue);
             }else {
                 if (RValue == 0) {  //if c(r) = 0, loads r with Immed
@@ -791,7 +792,7 @@ public class CPU {
         int[] result = intToBinaryArray(Integer.toString(x));
         int[] currentCCValue = cc.getRegisterValue();
         if(immed != 0) {
-            if (x < -32768) {       // underflow, condition code cc(1) -> 1
+            if (x < -32768) {       // underflow, condition code cc(2) -> 1
                 currentCCValue[1] = 1;
                 cc.setRegisterValue(currentCCValue);
             }else {
@@ -803,16 +804,64 @@ public class CPU {
     }
 
     private void executeMLT(int[] effectiveAddress) {
-        return;
+        int rx = effectiveAddress[2];
+        int ry = effectiveAddress[3];
+
+        int[] contentRx = GPRList.get(rx).getRegisterValue();
+        int[] contentRy = GPRList.get(ry).getRegisterValue();
+        BigInteger bigContentRx = BigInteger.valueOf(binaryArrayToInt(contentRx));
+        BigInteger bigContentRy = BigInteger.valueOf(binaryArrayToInt(contentRy));
+        BigInteger product = bigContentRx.multiply(bigContentRy);
+        int[] currentCCValue = cc.getRegisterValue();
+
+        if (product.abs().compareTo(maxINT) > 0) {    // product > maxINT
+            // OVERFLOW, set CC1 to 1
+            currentCCValue[0] = 1;
+            cc.setRegisterValue(currentCCValue);
+        }else if((rx == 0 || rx == 2) && (ry == 0 || ry == 2)) {
+            int[] result = intToBinaryArray(Integer.toString(product.intValue()));
+            int[] rxRes = new int[16];
+            int[] rx1Res = new int[16];
+
+            // Copy the high-order 8 bits to array x
+            System.arraycopy(result, 0, rxRes, 0, 8);
+            // Copy the low-order 8 bits to array y
+            System.arraycopy(result, 8, rx1Res, 0, 8);
+
+            GPRList.get(rx).setRegisterValue(rxRes);
+            GPRList.get(rx + 1).setRegisterValue(rx1Res);
+        }else {
+            System.err.println("MLT instruction rx and ry must be 0 or 2.");
+        }
     }
 
     private void executeDVD(int[] effectiveAddress) {
-        return;
+        int rx = effectiveAddress[2];
+        int ry = effectiveAddress[3];
+
+        int[] contentRx = GPRList.get(rx).getRegisterValue();
+        int[] contentRy = GPRList.get(ry).getRegisterValue();
+        int rxValue = binaryArrayToInt(contentRx);
+        int ryValue = binaryArrayToInt(contentRy);
+        int[] currentCCValue = cc.getRegisterValue();
+
+        if (ryValue == 0) {
+            // DIVZERO, set CC3 to 1
+            currentCCValue[2] = 1;
+            cc.setRegisterValue(currentCCValue);
+        }else if((rx == 0 || rx == 2) && (ry == 0 || ry == 2)) {
+            int[] rxRes = intToBinaryArray(Integer.toString(rxValue / ryValue));  //rx contains the quotient
+            int[] rx1Res = intToBinaryArray(Integer.toString(rxValue % ryValue));  //rx+1 contains the remainder
+            GPRList.get(rx).setRegisterValue(rxRes);
+            GPRList.get(rx + 1).setRegisterValue(rx1Res);
+        }else {
+            System.err.println("DVD instruction rx and ry must be 0 or 2.");
+        }
     }
 
     private void executeTRR(int[] effectiveAddress) {
         int rx = effectiveAddress[2];
-        int ry = effectiveAddress[2];
+        int ry = effectiveAddress[3];
 
         int[] contentRx = GPRList.get(rx).getRegisterValue();
         int[] contentRy = GPRList.get(ry).getRegisterValue();
@@ -839,7 +888,7 @@ public class CPU {
 
     private void executeAND(int[] effectiveAddress) {
         int rx = effectiveAddress[2];
-        int ry = effectiveAddress[2];
+        int ry = effectiveAddress[3];
 
         int[] contentRx = GPRList.get(rx).getRegisterValue();
         int[] contentRy = GPRList.get(ry).getRegisterValue();
@@ -855,7 +904,7 @@ public class CPU {
 
     private void executeORR(int[] effectiveAddress) {
         int rx = effectiveAddress[2];
-        int ry = effectiveAddress[2];
+        int ry = effectiveAddress[3];
 
         int[] contentRx = GPRList.get(rx).getRegisterValue();
         int[] contentRy = GPRList.get(ry).getRegisterValue();
