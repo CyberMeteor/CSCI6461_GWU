@@ -343,6 +343,12 @@ public class CPU {
             case "SIR":
                 executeSIR(effectiveAddress);
                 break;
+            case "MLT":
+                executeMLT(effectiveAddress);
+                break;
+            case "DVD":
+                executeDVD(effectiveAddress);
+                break;
             case "TRR":
                 executeTRR(effectiveAddress);
                 break;
@@ -646,7 +652,18 @@ public class CPU {
     }
 
     private void executeJCC(int[] effectiveAddress) {
-        return;
+        int EA = effectiveAddress[0];
+        int ccBit = effectiveAddress[2];  // cc replaces r for this instruction
+
+        // Check if the cc bit cc(cc) of the condition code is 1
+        if (getRegisterValue(RegisterType.ConditionCode)[ccBit] == 1) {
+            // Set the Program Counter (PC) to the specified address
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        } else {
+            // If the E bit is not set, increment the Program Counter (PC) by 1
+            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+        }
     }
 
     private void executeJMA(int[] effectiveAddress) {
@@ -662,11 +679,38 @@ public class CPU {
     }
 
     private void executeSOB(int[] effectiveAddress) {
-        return;
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+
+        int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
+        int x = RValue - 1;
+        int[] result = intToBinaryArray(Integer.toString(x));
+        GPRList.get(R).setRegisterValue(result);
+
+        if (x > 0) {
+            // Set the Program Counter (PC) to the specified address
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        } else {
+            // If the c(r) > 0, increment the Program Counter (PC) by 1
+            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+        }
     }
 
     private void executeJGE(int[] effectiveAddress) {
-        return;
+        int EA = effectiveAddress[0];
+        int R = effectiveAddress[2];
+
+        int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
+
+        if (RValue >= 0) {
+            // Set the Program Counter (PC) to the specified address
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        } else {
+            // If the c(r) > 0, increment the Program Counter (PC) by 1
+            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
+            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+        }
     }
 
     private void executeAMR(int[] effectiveAddress) {
@@ -756,6 +800,14 @@ public class CPU {
                 }
             }
         }
+    }
+
+    private void executeMLT(int[] effectiveAddress) {
+        return;
+    }
+
+    private void executeDVD(int[] effectiveAddress) {
+        return;
     }
 
     private void executeTRR(int[] effectiveAddress) {
