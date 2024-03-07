@@ -610,7 +610,7 @@ public class CPU {
                 //Set MBR from memory
                 setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
                 //Load MBR into index register
-                x2.setRegisterValue(mbr.getRegisterValue());
+                x3.setRegisterValue(mbr.getRegisterValue());
                 break;
             default:
         }
@@ -676,7 +676,11 @@ public class CPU {
     }
 
     private void executeJSR(int[] effectiveAddress) {
-        return;
+        int EA = effectiveAddress[0];
+        int[] result = intToBinaryArray(Integer.toString(binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter)) + 1));
+        GPRList.get(3).setRegisterValue(result);
+        // Set the Program Counter (PC) to the specified address
+        setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
     }
 
     private void executeSOB(int[] effectiveAddress) {
