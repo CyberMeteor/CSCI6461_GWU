@@ -1,5 +1,6 @@
 package gwu.csci6461.team4;
 
+import gwu.csci6461.team4.Cache.Cache;
 import gwu.csci6461.team4.assembler.Assembler;
 import gwu.csci6461.team4.registers.Register;
 import gwu.csci6461.team4.registers.RegisterType;
@@ -29,6 +30,7 @@ public class CPU {
     Register hlt = new Register(1);
     Memory mem = new Memory();
     private BigInteger maxINT = BigInteger.valueOf((long) Math.pow(2, 16));
+    private Cache cache = new Cache();
 
     public CPU(){
         GPRList.add(gpr0); GPRList.add(gpr1); GPRList.add(gpr2); GPRList.add(gpr3);
@@ -272,6 +274,60 @@ public class CPU {
             executeInstruction(instruction, result);
 
         }
+    }
+
+    public void load() {
+        // Set MBR to the value located at MAR
+        fetch();
+    }
+
+    public void loadPlus() {
+        // Set MBR to the value located at MAR
+        int[] currentMAR = getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = binaryToInt(currentMAR);
+        fetch();
+        //Increment MAR 1
+        transformedMAR++;
+        int[] newMAR = intToBinaryArrayShort(Integer.toBinaryString(transformedMAR));
+        setRegisterValue(RegisterType.MemoryAddressRegister, newMAR);
+    }
+
+    public void store() {
+        int[] currentMAR = getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = binaryToInt(currentMAR);
+        int[] currentMBR = getRegisterValue(RegisterType.MemoryBufferRegister);
+        int transformedMBR = binaryToInt(currentMBR);
+        // Store MAR and MBR into Cache
+        cache.addElement(transformedMAR, transformedMBR);
+        // Set Memory(MAR) to MBR
+        setMemoryValue(transformedMAR, currentMBR);
+    }
+
+    public void storePlus() {
+        int[] currentMAR = getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = binaryToInt(currentMAR);
+        int[] currentMBR = getRegisterValue(RegisterType.MemoryBufferRegister);
+        int transformedMBR = binaryToInt(currentMBR);
+        // Store MAR and MBR into Cache
+        cache.addElement(transformedMAR, transformedMBR);
+        // Set Memory(MAR) to MBR
+        setMemoryValue(transformedMAR, currentMBR);
+
+        //ADD 1
+        transformedMAR++;
+        int[] newMAR = intToBinaryArrayShort(Integer.toBinaryString(transformedMAR));
+        setRegisterValue(RegisterType.MemoryAddressRegister, newMAR);
+    }
+
+    public void fetch() {  // Fetch MBR from cache
+        int[] currentMAR = getRegisterValue(RegisterType.MemoryAddressRegister);
+        int transformedMAR = binaryToInt(currentMAR);
+        int currentMBR = cache.getElement(transformedMAR);
+        int[] transformedMBR = intToBinaryArray(Integer.toString(currentMBR));  // Cache hit, Load from cache
+        if (currentMBR == 0) {  // Cache miss, Load from memory
+            transformedMBR = mem.getMemoryValue(transformedMAR);
+        }
+        mbr.setRegisterValue(transformedMBR);
     }
 
     private String decodeOPCode(int[] binaryOPCode) {

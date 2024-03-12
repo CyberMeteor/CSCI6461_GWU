@@ -108,42 +108,26 @@ public class SimulatorPanelController {
 
     @FXML
     protected void LoadClick() {
-        // Set MBR to the value located at MAR
-        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
-        int transformedMAR = cpu.binaryToInt(currentMAR);
-        cpu.setRegisterValue(RegisterType.MemoryBufferRegister, cpu.getMemoryValue(transformedMAR));
+        cpu.load();
+        // Update MBR text field
+        MBRTextField.setText(formatText(cpu.getRegisterValue(RegisterType.MemoryBufferRegister)));
     }
 
     @FXML
     protected void LoadPlusClick() {
-        // Set MBR to the value located at MAR
-        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
-        int transformedMAR = cpu.binaryToInt(currentMAR);
-        cpu.setRegisterValue(RegisterType.MemoryBufferRegister, cpu.getMemoryValue(transformedMAR));
-        //Increment MAR 1
-        transformedMAR++;
-        int[] newMAR = cpu.intToBinaryArrayShort(Integer.toBinaryString(transformedMAR));
-        cpu.setRegisterValue(RegisterType.MemoryAddressRegister, newMAR);
+        cpu.loadPlus();
+        // Update MBR text field
+        MBRTextField.setText(formatText(cpu.getRegisterValue(RegisterType.MemoryBufferRegister)));
     }
 
     @FXML
     protected void StoreClick() {
-        // Set Memory(MAR) to MBR
-        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
-        int transformedMAR = cpu.binaryToInt(currentMAR);
-        cpu.setMemoryValue(transformedMAR, cpu.getRegisterValue(RegisterType.MemoryBufferRegister));
+        cpu.store();
     }
 
     @FXML
     protected void StorePlusClick() {
-        // Setting MAR to MBR
-        int[] currentMAR = cpu.getRegisterValue(RegisterType.MemoryAddressRegister);
-        int transformedMAR = cpu.binaryToInt(currentMAR);
-        cpu.setMemoryValue(transformedMAR, cpu.getRegisterValue(RegisterType.MemoryBufferRegister));
-        //ADD 1
-        transformedMAR++;
-        int[] newMAR = cpu.intToBinaryArrayShort(Integer.toBinaryString(transformedMAR));
-        cpu.setRegisterValue(RegisterType.MemoryAddressRegister, newMAR);
+        cpu.storePlus();
     }
 
     @FXML
