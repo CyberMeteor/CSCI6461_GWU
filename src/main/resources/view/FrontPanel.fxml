@@ -121,6 +121,8 @@
                      <children>
                         <Label fx:id="IPLLabel" layoutX="203.0" layoutY="11.0" text="IPL" />
                         <Button id="IPLButton" layoutX="186.0" layoutY="7.0" mnemonicParsing="false" onAction="#IPLClick" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="7.0" />
+                        <Button id="ConsoleButton" layoutX="22.0" layoutY="7.0" mnemonicParsing="false" onAction="#ConsoleClick" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="190.0" />
+                        <Label fx:id="ConsoleLabel" layoutX="-32.0" layoutY="10.0" text="Console" />
                      </children>
                   </AnchorPane>
                </children>

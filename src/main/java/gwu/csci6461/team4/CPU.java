@@ -1,6 +1,6 @@
 package gwu.csci6461.team4;
 
-import gwu.csci6461.team4.Cache.Cache;
+import gwu.csci6461.team4.cache.Cache;
 import gwu.csci6461.team4.assembler.Assembler;
 import gwu.csci6461.team4.registers.Register;
 import gwu.csci6461.team4.registers.RegisterType;

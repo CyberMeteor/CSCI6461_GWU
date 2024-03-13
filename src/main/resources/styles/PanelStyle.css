@@ -43,6 +43,19 @@
     -fx-background-color: #8B1A1A;
 }
 
+/* Apply background and text colors to buttons with specific IDs */
+#ConsoleButton {
+    -fx-background-color: #EE2C2C; /* Set background color */
+}
+
+#ConsoleButton:hover {
+    -fx-background-color: #CD2626; /* Set background color */
+}
+
+#ConsoleButton:pressed {
+    -fx-background-color: #8B1A1A;
+}
+
 /* Apply background and text colors to anchor panes */
 .anchor-pane {
     -fx-background-color: transparent; /* Set background color */

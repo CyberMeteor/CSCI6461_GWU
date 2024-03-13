@@ -1,4 +1,4 @@
-package gwu.csci6461.team4.Cache;
+package gwu.csci6461.team4.cache;
 
 public class CacheData {
     private int address;

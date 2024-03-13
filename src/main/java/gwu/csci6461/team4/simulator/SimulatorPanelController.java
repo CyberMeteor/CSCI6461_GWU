@@ -6,6 +6,9 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -14,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -200,6 +204,30 @@ public class SimulatorPanelController {
         cpu.setRegisterValue(RegisterType.ProgramCounter, default_PC_loc);
     }
 
+    @FXML
+    protected void ConsoleClick() {
+        try {
+            // Load the FXML file for the pop-up window
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ConsolePopup.fxml"));
+            Parent root = loader.load();
+
+            // Create a scene
+            Scene consoleScene = new Scene(root);
+            // Add CSS file to the scene
+            consoleScene.getStylesheets().add(getClass().getResource("/styles/ConsoleStyle.css").toExternalForm());
+
+            // Create a new stage
+            Stage popupStage = new Stage();
+            popupStage.setTitle("Console Output");
+            popupStage.setScene(consoleScene);
+
+            // Show the stage
+            popupStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     // Labels
     @FXML
@@ -270,6 +298,9 @@ public class SimulatorPanelController {
 
     @FXML
     private Label IPLLabel;
+
+    @FXML
+    private Label ConsoleLabel;
 
     @FXML
     private Label ProgramFileLabel;

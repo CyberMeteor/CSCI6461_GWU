@@ -1,0 +1,31 @@
+/* Apply background and text colors to the root pane */
+#consolePane {
+    -fx-background-color: #CCE5FF; /* Set background color */
+}
+
+/* Apply background and text colors to labels */
+.label {
+    -fx-text-fill: #333333; /* Set text color */
+}
+
+/* Apply background and text colors to text fields */
+.text-area {
+    -fx-background-color: #ffffff; /* Set background color */
+    -fx-text-fill: #333333; /* Set text color */
+}
+
+/* Apply background and text colors to buttons */
+.button {
+    -fx-background-color: #4CAF50; /* Set background color */
+    -fx-text-fill: #ffffff; /* Set text color */
+}
+
+/* Apply background color change when hovering over buttons */
+.button:hover {
+    -fx-background-color: #2E7D32; /* Set background color when hovering */
+}
+
+/* Apply background color change when button is pressed */
+.button:pressed {
+    -fx-background-color: #1B5E20; /* Set background color when pressed */
+}
