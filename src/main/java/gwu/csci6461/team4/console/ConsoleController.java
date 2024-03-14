@@ -28,4 +28,19 @@ public class ConsoleController {
 
     @FXML
     private TextArea OutputTextArea;
+
+    private ConsoleIO consoleIO;
+
+    // Method to append text to OutputTextArea
+    public void appendToOutputTextArea(String text) {
+        OutputTextArea.appendText(text);
+    }
+
+    // Method to initialize the controller
+    @FXML
+    public void initialize() {
+        // Initialize ConsoleIO and redirect System.out to OutputTextArea
+        consoleIO = new ConsoleIO(this);
+        consoleIO.redirectSystemOut();
+    }
 }
