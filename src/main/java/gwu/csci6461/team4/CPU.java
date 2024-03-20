@@ -4,10 +4,13 @@ import gwu.csci6461.team4.cache.Cache;
 import gwu.csci6461.team4.assembler.Assembler;
 import gwu.csci6461.team4.registers.Register;
 import gwu.csci6461.team4.registers.RegisterType;
+import javafx.application.Platform;
+import javafx.scene.control.TextInputDialog;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class CPU {
@@ -31,6 +34,8 @@ public class CPU {
     Memory mem = new Memory();
     private BigInteger maxINT = BigInteger.valueOf((long) Math.pow(2, 16));
     private Cache cache = new Cache();
+    private ArrayList<Integer> asciiValue = new ArrayList<Integer>();
+
 
     public CPU(){
         GPRList.add(gpr0); GPRList.add(gpr1); GPRList.add(gpr2); GPRList.add(gpr3);
@@ -424,9 +429,14 @@ public class CPU {
             case "RRC":
                 executeRRC(effectiveAddress);
                 break;
-
+            case "IN":
+                executeIN(effectiveAddress);
+            case "OUT":
+                executeOut(effectiveAddress);
         }
     }
+
+
 
     public int[] computeEffectiveAddr(int[] instruction) {
         String strInstruction = Arrays.toString(instruction);
@@ -597,27 +607,41 @@ public class CPU {
     private void executeSTR(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
         int R = effectiveAddress[2];
-        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
-        switch (R) {
-            case 0:
-                setRegisterValue(RegisterType.MemoryBufferRegister, gpr0.getRegisterValue());
-                setMemoryValue(EA, mbr.getRegisterValue());
-                break;
-            case 1:
-                setRegisterValue(RegisterType.MemoryBufferRegister, gpr1.getRegisterValue());
-                setMemoryValue(EA, mbr.getRegisterValue());
-                break;
-            case 2:
-                setRegisterValue(RegisterType.MemoryBufferRegister, gpr2.getRegisterValue());
-                setMemoryValue(EA, mbr.getRegisterValue());
-                break;
-            default:
-                setRegisterValue(RegisterType.MemoryBufferRegister, gpr3.getRegisterValue());
-                setMemoryValue(EA, mbr.getRegisterValue());
+        if(GPRList.get(R).getDeviceInput() == 0) {
+            setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+            switch (R) {
+                case 0:
+                    setRegisterValue(RegisterType.MemoryBufferRegister, gpr0.getRegisterValue());
+                    setMemoryValue(EA, mbr.getRegisterValue());
+                    break;
+                case 1:
+                    setRegisterValue(RegisterType.MemoryBufferRegister, gpr1.getRegisterValue());
+                    setMemoryValue(EA, mbr.getRegisterValue());
+                    break;
+                case 2:
+                    setRegisterValue(RegisterType.MemoryBufferRegister, gpr2.getRegisterValue());
+                    setMemoryValue(EA, mbr.getRegisterValue());
+                    break;
+                default:
+                    setRegisterValue(RegisterType.MemoryBufferRegister, gpr3.getRegisterValue());
+                    setMemoryValue(EA, mbr.getRegisterValue());
+            }
         }
 
+        else{
+            int value;
+            List<Integer> asciiList = GPRList.get(R).getAsciiValue();
+            for (int i = 0; i<asciiList.size(); i++){
+                value = asciiValue.get(i);
+                setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+                setRegisterValue(RegisterType.MemoryBufferRegister, intToBinaryArrayShort(Integer.toBinaryString(value)));
+                store();
+                EA += 1;
+            }
+            GPRList.get(R).setDeviceInput(0);
+        }
+        incrementPCByOne();
     }
-
     private void executeSTX(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
         int IX = effectiveAddress[3];
@@ -689,8 +713,7 @@ public class CPU {
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
         } else {
             // If the E bit is not set, increment the Program Counter (PC) by 1
-            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
-            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+            incrementPCByOne();
         }
     }
 
@@ -703,8 +726,7 @@ public class CPU {
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
         } else {
             // If the E bit is not set, increment the Program Counter (PC) by 1
-            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
-            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+            incrementPCByOne();
         }
     }
 
@@ -718,8 +740,7 @@ public class CPU {
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
         } else {
             // If the E bit is not set, increment the Program Counter (PC) by 1
-            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
-            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+            incrementPCByOne();
         }
     }
 
@@ -753,8 +774,7 @@ public class CPU {
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
         } else {
             // If the c(r) > 0, increment the Program Counter (PC) by 1
-            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
-            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+            incrementPCByOne();
         }
     }
 
@@ -769,8 +789,7 @@ public class CPU {
             setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
         } else {
             // If the c(r) > 0, increment the Program Counter (PC) by 1
-            int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
-            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+            incrementPCByOne();
         }
     }
 
@@ -1039,6 +1058,68 @@ public class CPU {
         }
 
         GPRList.get(R).setRegisterValue(resultArr);
+    }
+    private void executeIN(int[] effectiveAddress){
+        System.out.println("IN instruction start");
+        int R = effectiveAddress[2];
+        int devID = binaryArrayToInt(ir.getRegisterValue());
+        if(devID == -1){
+            System.out.println("IN instruction finished without an action");
+        } else{
+            String[] value = {""};
+            if(devID == 0) {
+                //Create a TextInputDialog
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Input Dialog");
+                dialog.setHeaderText("Please type in your input for keyboard.");
+                Platform.runLater(() -> {
+                    dialog.showAndWait().ifPresent(result -> value[0] = result);
+                });
+            }
+            // If input only contains numbers
+            if(value[0].matches("\\d+")) {
+                int[] result = intToBinaryArray(value[0]);
+                GPRList.get(R).setRegisterValue(result);
+            } else{
+                GPRList.get(R).setDeviceInput(1);
+                asciiValue.clear();
+                for(int i = 0; i<value[0].length(); i++) {
+                    asciiValue.add((int) value[0].charAt(i));
+                }
+                int[] result = intToBinaryArray(String.valueOf(value[0].charAt(0)));
+                GPRList.get(R).setAsciiValue(asciiValue);
+                GPRList.get(R).setRegisterValue(result);
+            }
+            System.out.println("IN instruction end.");
+        }
+        incrementPCByOne();
+    }
+
+    private void executeOut(int[] effectiveAddress) {
+        int R = effectiveAddress[2];
+        int devID = binaryArrayToInt(ir.getRegisterValue());
+        if(devID != 0) {
+            int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
+            if(devID == 1) {
+                if(RValue < 10) {
+                    System.out.println(RValue);
+                }
+
+                else{
+                    System.out.println((char) RValue);
+                }
+            }
+            System.out.println("OUT instruction end");
+        }
+        else{
+            System.out.println("OUT instruction end without an action");
+        }
+       incrementPCByOne();
+    }
+
+    private void incrementPCByOne() {
+        int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
+        setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
     }
 
 

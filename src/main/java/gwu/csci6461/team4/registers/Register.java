@@ -1,10 +1,15 @@
 package gwu.csci6461.team4.registers;
 
 
+import java.util.ArrayList;
+
 public class Register {
 
     private int[] registerValue;
     private int registerSize = 0;
+    private int deviceInput;
+    private ArrayList<Integer> asciiValue = new ArrayList<Integer>();
+
 
     public Register(int size){
         initRegisterSize(size);
@@ -41,4 +46,21 @@ public class Register {
         this.registerValue = new int[register_size];
 
     }
+
+    public void setDeviceInput(int number) {
+        deviceInput = number;
+    }
+
+    public int getDeviceInput() {
+        return deviceInput;
+    }
+
+    public void setAsciiValue(ArrayList<Integer> asciiValue){
+        this.asciiValue = asciiValue;
+    }
+
+    public ArrayList<Integer> getAsciiValue(){
+        return asciiValue;
+    }
+
 }
