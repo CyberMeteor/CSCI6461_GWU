@@ -10,16 +10,16 @@
    <children>
       <AnchorPane id="consolePane" prefHeight="600.0" prefWidth="800.0">
          <children>
-            <AnchorPane layoutX="300.0" layoutY="31.0" prefHeight="86.0" prefWidth="200.0">
+            <AnchorPane layoutX="300.0" layoutY="31.0" prefHeight="86.0" prefWidth="200.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label fx:id="ConsoleLabel" layoutX="48.0" layoutY="25.0" text="Console">
+                  <Label fx:id="ConsoleLabel" layoutX="48.0" layoutY="25.0" text="Console" AnchorPane.topAnchor="25.0">
                      <font>
                         <Font size="30.0" />
                      </font>
                   </Label>
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="39.0" layoutY="197.0" prefHeight="328.0" prefWidth="247.0" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="150.0">
+            <AnchorPane layoutX="39.0" layoutY="197.0" prefHeight="328.0" prefWidth="247.0" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="100.0">
                <children>
                   <Label fx:id="InputLabel" layoutX="14.0" layoutY="4.0" text="Input">
                      <font>
@@ -27,17 +27,23 @@
                      </font>
                   </Label>
                   <TextArea fx:id="InputTextArea" layoutX="14.0" layoutY="53.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="30.0" />
-                  <Button id="SubmitButton" layoutX="96.0" layoutY="342.0" mnemonicParsing="false" onAction="#SubmitClick" text="Submit" />
+                  <Button id="SubmitButton" layoutX="96.0" layoutY="342.0" mnemonicParsing="false" onAction="#SubmitClick" text="Submit" AnchorPane.bottomAnchor="5.0" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="420.0" layoutY="151.0" prefHeight="375.0" prefWidth="443.0" AnchorPane.bottomAnchor="75.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="150.0">
+            <AnchorPane layoutX="420.0" layoutY="151.0" prefHeight="375.0" prefWidth="443.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="100.0">
                <children>
                   <Label fx:id="OutputLabel" layoutX="10.0" layoutY="4.0" text="Output">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <TextArea fx:id="OutputTextArea" layoutX="14.0" layoutY="38.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="30.0" />
+                  <TextArea fx:id="OutputTextArea" layoutX="14.0" layoutY="38.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="230.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="30.0" />
+                  <Label fx:id="PrinterLabel" layoutX="10.0" layoutY="257.0" text="Printer">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="PrinterTextArea" layoutX="22.0" layoutY="284.0" prefHeight="165.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="285.0" />
                </children>
             </AnchorPane>
          </children></AnchorPane>

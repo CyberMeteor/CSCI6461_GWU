@@ -21,6 +21,9 @@ public class ConsoleController {
     @FXML
     private Label OutputLabel;
 
+    @FXML
+    private Label PrinterLabel;
+
 
     // TextArea
     @FXML
@@ -29,11 +32,19 @@ public class ConsoleController {
     @FXML
     private TextArea OutputTextArea;
 
+    @FXML
+    private TextArea PrinterTextArea;
+
     private ConsoleIO consoleIO;
 
     // Method to append text to OutputTextArea
     public void appendToOutputTextArea(String text) {
         OutputTextArea.appendText(text);
+    }
+
+    // Method to append text to PrinterTextArea
+    public void appendToPrinterTextArea(String text) {
+        PrinterTextArea.appendText(text);
     }
 
     // Method to initialize the controller
