@@ -2,8 +2,10 @@ package gwu.csci6461.team4.registers;
 
 
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.stream.IntStream;
 
-public class Register {
+public class Register extends BitSet {
 
     private int[] registerValue;
     private int registerSize = 0;
@@ -61,6 +63,17 @@ public class Register {
 
     public ArrayList<Integer> getAsciiValue(){
         return asciiValue;
+    }
+
+    public String getValue() {
+        StringBuilder buffer = new StringBuilder(registerSize);
+        IntStream.range(0, registerSize).mapToObj(i -> get(i) ? '1' : '0').forEach(buffer::append);
+        return buffer.toString();
+    }
+
+    public int getOperation() {
+        String iValue = getValue().substring(0,6);
+        return Integer.parseInt(iValue,2);
     }
 
 }

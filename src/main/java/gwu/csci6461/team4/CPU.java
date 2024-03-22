@@ -49,12 +49,7 @@ public class CPU {
         } else if (registerType.getType().equals("MBR")) {
             mbr.setRegisterValue(value);
         } else if (registerType.getType().equals("PC")) {
-            if (binaryToInt(value) < 10) {
-                int[] tempVal = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0};
-                pc.setRegisterValue(tempVal);
-            } else {
-                pc.setRegisterValue(value);
-            }
+            pc.setRegisterValue(value);
         } else if (registerType.getType().equals("CC")) {
             cc.setRegisterValue(value);
         } else if (registerType.getType().equals("IR")) {
@@ -81,7 +76,7 @@ public class CPU {
     }
 
     public int[] getRegisterValue(RegisterType registerType) {
-        int[] registerValue;
+        int[] registerValue = new int[0];
         if (registerType.getType().equals("PC")) {
             registerValue = pc.getRegisterValue();
         } else if (registerType.getType().equals("GPR0")) {
@@ -108,7 +103,7 @@ public class CPU {
             registerValue = mbr.getRegisterValue();
         } else if (registerType.getType().equals("MFR")) {
             registerValue = mfr.getRegisterValue();
-        } else {
+        } else if (registerType.getType().equals("HLT")){
             registerValue = hlt.getRegisterValue();
         }
         return registerValue;
@@ -247,20 +242,13 @@ public class CPU {
     }
 
     public void setMemoryValue(int row, int[] value) {
-        if (row < 6) {
-            int[] fault_code = new int[]{0, 0, 0, 1};
-            mfr.setRegisterValue(fault_code);
-            int[] msg = new int[]{1};
-            hlt.setRegisterValue(msg);
-        } else {
-            mem.setMemoryValue(row, value);
-        }
+        mem.setMemoryValue(row, value);
     }
 
     public void execute(String type) {
         if ("single".equals(type)) {
-            //We first get the instruction location and save it to IR from PC
             int[] instructionAddress = getRegisterValue(RegisterType.ProgramCounter);
+
             int intAddress = binaryToInt(instructionAddress);
             setRegisterValue(RegisterType.InstructionRegister, getMemoryValue(intAddress));
 
@@ -276,8 +264,19 @@ public class CPU {
             int[] opCode = Arrays.copyOfRange(instructionBinary, 0, 6);
             String instruction = decodeOPCode(opCode);
             int[] result = computeEffectiveAddr(instructionBinary);
-            executeInstruction(instruction, result);
+            System.out.println("Instruction is : " + instruction + "Op code is : " + Arrays.toString(opCode));
+            //We first get the instruction location and save it to IR from PC
 
+            if(binaryArrayToInt(getRegisterValue(RegisterType.InstructionRegister)) == 0){
+                int[] fault_code = new int[]{0, 0, 0, 1};
+                mfr.setRegisterValue(fault_code);
+                int[] msg = new int[]{1};
+                hlt.setRegisterValue(msg);
+            }
+
+            else{
+                executeInstruction(instruction, result);
+            }
         }
     }
 
