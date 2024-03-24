@@ -40,7 +40,7 @@ public class SimulatorPanelController {
         cpu.setRegisterValue(RegisterType.ProgramCounter, tempValue);
         timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> {
             updateRegisters();
-            if (runCheck) {
+            if (runCheck && cpu.getExecuteInstructions()) {
                 cpu.execute("single");
                 // If running, check if the halt flag is raised
                 if (cpu.getRegisterValue(RegisterType.HLT)[0] == 1) {

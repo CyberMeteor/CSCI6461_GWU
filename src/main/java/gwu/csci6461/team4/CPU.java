@@ -9,10 +9,8 @@ import javafx.application.Platform;
 import javafx.scene.control.TextInputDialog;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class CPU {
 
@@ -36,6 +34,8 @@ public class CPU {
     private BigInteger maxINT = BigInteger.valueOf((long) Math.pow(2, 16));
     private Cache cache = new Cache();
     private ArrayList<Integer> asciiValue = new ArrayList<Integer>();
+    private boolean executeInstructions = true;
+
 
 
     public CPU(){
@@ -431,8 +431,11 @@ public class CPU {
                 break;
             case "IN":
                 executeIN(effectiveAddress);
+                break;
             case "OUT":
                 executeOUT(effectiveAddress);
+                break;
+            default:
         }
     }
 
@@ -640,7 +643,6 @@ public class CPU {
             }
             GPRList.get(R).setDeviceInput(0);
         }
-        incrementPCByOne();
     }
     private void executeSTX(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
@@ -1059,36 +1061,43 @@ public class CPU {
 
         GPRList.get(R).setRegisterValue(resultArr);
     }
-    private void executeIN(int[] effectiveAddress){
+
+    private void executeIN(int[] effectiveAddress) {
         System.out.println("IN instruction start");
         int R = effectiveAddress[2];
-        int devID = binaryArrayToInt(ir.getRegisterValue());
-        if(devID == -1){
+        int devID = Integer.parseInt(ir.getValue().substring(11), 2);
+        if (devID == -1) {
             System.out.println("IN instruction finished without an action");
-        } else{
-            String[] value = {""};
-            if(devID == 0) {
-                //Create a TextInputDialog
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Input Dialog");
-                dialog.setHeaderText("Please type in your input for keyboard.");
+        } else {
+            if (devID == 0) {
+                CompletableFuture<String> future = new CompletableFuture<>();
                 Platform.runLater(() -> {
-                    dialog.showAndWait().ifPresent(result -> value[0] = result);
+                    setExecuteInstructions(false); // Pause CPU execution
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("Input Dialog");
+                    dialog.setHeaderText("Please type in your input for keyboard.");
+                    Optional<String> result = dialog.showAndWait();
+                    result.ifPresent(future::complete);
                 });
-            }
-            // If input only contains numbers
-            if(value[0].matches("\\d+")) {
-                int[] result = intToBinaryArray(value[0]);
-                GPRList.get(R).setRegisterValue(result);
-            } else{
-                GPRList.get(R).setDeviceInput(1);
-                asciiValue.clear();
-                for(int i = 0; i<value[0].length(); i++) {
-                    asciiValue.add((int) value[0].charAt(i));
-                }
-                int[] result = intToBinaryArray(String.valueOf(value[0].charAt(0)));
-                GPRList.get(R).setAsciiValue(asciiValue);
-                GPRList.get(R).setRegisterValue(result);
+
+                future.thenAcceptAsync(value -> {
+                    if (value.matches("\\d+")) {
+                        int[] binaryArray = intToBinaryArray(value);
+                        GPRList.get(R).setRegisterValue(binaryArray);
+                        System.out.println("Value is : " + value);
+                    } else {
+                        System.out.println("Value with characters : " + value);
+                        GPRList.get(R).setDeviceInput(1);
+                        asciiValue.clear();
+                        for (int i = 0; i < value.length(); i++) {
+                            asciiValue.add((int) value.charAt(i));
+                        }
+                        int[] binaryArray = value.isEmpty() ? new int[0] : intToBinaryArray(String.valueOf(value.charAt(0)));
+                        GPRList.get(R).setAsciiValue(asciiValue);
+                        GPRList.get(R).setRegisterValue(binaryArray);
+                    }
+                    setExecuteInstructions(true);
+                });
             }
             System.out.println("IN instruction end.");
         }
@@ -1120,6 +1129,14 @@ public class CPU {
     private void incrementPCByOne() {
         int currentPC = binaryArrayToInt(getRegisterValue(RegisterType.ProgramCounter));
         setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(currentPC + 1)));
+    }
+
+    public void setExecuteInstructions(boolean execute) {
+        this.executeInstructions = execute;
+    }
+
+    public boolean getExecuteInstructions() {
+        return this.executeInstructions;
     }
 
 
