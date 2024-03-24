@@ -8,17 +8,10 @@ import javafx.scene.control.TextArea;
 
 
 public class ConsoleController {
-    @FXML
-    protected void SubmitClick() {
-        return;
-    }
 
     // Labels
     @FXML
     private Label ConsoleLabel;
-
-    @FXML
-    private Label InputLabel;
 
     @FXML
     private Label OutputLabel;
@@ -28,9 +21,6 @@ public class ConsoleController {
 
 
     // TextArea
-    @FXML
-    private TextArea InputTextArea;
-
     @FXML
     private TextArea OutputTextArea;
 
@@ -55,9 +45,5 @@ public class ConsoleController {
         // Initialize ConsoleIO and redirect System.out to OutputTextArea
         consoleIO = new ConsoleIO(this);
         consoleIO.redirectSystemOut();
-        InputTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            // Update the PrinterTextArea with the new value
-            appendToPrinterTextArea(newValue);
-        });
     }
 }

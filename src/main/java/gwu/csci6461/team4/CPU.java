@@ -2,6 +2,7 @@ package gwu.csci6461.team4;
 
 import gwu.csci6461.team4.cache.Cache;
 import gwu.csci6461.team4.assembler.Assembler;
+import gwu.csci6461.team4.console.ConsoleController;
 import gwu.csci6461.team4.registers.Register;
 import gwu.csci6461.team4.registers.RegisterType;
 import javafx.application.Platform;
@@ -431,7 +432,7 @@ public class CPU {
             case "IN":
                 executeIN(effectiveAddress);
             case "OUT":
-                executeOut(effectiveAddress);
+                executeOUT(effectiveAddress);
         }
     }
 
@@ -1094,18 +1095,19 @@ public class CPU {
         incrementPCByOne();
     }
 
-    private void executeOut(int[] effectiveAddress) {
+    private void executeOUT(int[] effectiveAddress) {
         int R = effectiveAddress[2];
         int devID = binaryArrayToInt(ir.getRegisterValue());
+        ConsoleController consoleController = new ConsoleController();
         if(devID != 0) {
             int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
             if(devID == 1) {
-                if(RValue < 10) {
+                if (RValue < 10) {
                     System.out.println(RValue);
-                }
-
-                else{
+                    consoleController.appendToPrinterTextArea(String.valueOf(RValue));  // Output the RValue to the printer console
+                } else {
                     System.out.println((char) RValue);
+                    consoleController.appendToPrinterTextArea(String.valueOf((char) RValue));  // Output the RValue to the printer console
                 }
             }
             System.out.println("OUT instruction end");
@@ -1113,7 +1115,6 @@ public class CPU {
         else{
             System.out.println("OUT instruction end without an action");
         }
-       incrementPCByOne();
     }
 
     private void incrementPCByOne() {
