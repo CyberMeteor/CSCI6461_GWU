@@ -846,21 +846,31 @@ public class CPU {
         setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
 
         int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
-        int immed = binaryArrayToInt(ir.getRegisterValue());
-        int x = RValue + immed;
-        int[] result = intToBinaryArray(Integer.toString(x));
+        int[] irValue = getRegisterValue(RegisterType.InstructionRegister);
+        String addr = Arrays.toString(irValue).replaceAll("[^0-9]", "").substring(11);
+        int immed = Integer.parseInt(addr,2);
+        String binaryString = Integer.toBinaryString(RValue + immed);
+        binaryString = String.format("%16s", binaryString).replace(' ', '0');
+        int[] result = intToBinaryArray(binaryString);
         int[] currentCCValue = cc.getRegisterValue();
         if(immed != 0) {
-            if (x > 32767) {
+            if(RValue + immed > 32767) {
                 currentCCValue[0] = 1;      // overflow, condition code cc(1) -> 1
                 cc.setRegisterValue(currentCCValue);
-            }else {
-                if (RValue == 0) {  //if c(r) = 0, loads r with Immed
-                    GPRList.get(R).setRegisterValue(result);
-                }
+            }
+
+            else{
+                GPRList.get(R).setRegisterValue(result);
             }
         }
     }
+    private String decimalToBinary(String decimalAddress) {
+        if (decimalAddress == null) {
+            decimalAddress = "0";
+        }
+        return new BigInteger(decimalAddress, 10).toString(2);
+    }
+
 
     private void executeSIR(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
@@ -1101,7 +1111,6 @@ public class CPU {
             }
             System.out.println("IN instruction end.");
         }
-        incrementPCByOne();
     }
 
     private void executeOUT(int[] effectiveAddress) {
@@ -1138,6 +1147,5 @@ public class CPU {
     public boolean getExecuteInstructions() {
         return this.executeInstructions;
     }
-
 
 }

@@ -38,7 +38,7 @@ public class SimulatorPanelController {
         cpu = new CPU();
         int[] tempValue = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0};
         cpu.setRegisterValue(RegisterType.ProgramCounter, tempValue);
-        timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
             updateRegisters();
             if (runCheck && cpu.getExecuteInstructions()) {
                 cpu.execute("single");
