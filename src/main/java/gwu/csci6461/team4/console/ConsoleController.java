@@ -27,8 +27,6 @@ public class ConsoleController {
     @FXML
     private TextArea PrinterTextArea;
 
-    private ConsoleIO consoleIO;
-
     // Method to append text to OutputTextArea
     public void appendToOutputTextArea(String text) {
         OutputTextArea.appendText(text);
@@ -43,7 +41,7 @@ public class ConsoleController {
     @FXML
     public void initialize() {
         // Initialize ConsoleIO and redirect System.out to OutputTextArea
-        consoleIO = new ConsoleIO(this);
+        ConsoleIO consoleIO = new ConsoleIO(this);
         consoleIO.redirectSystemOut();
     }
 }

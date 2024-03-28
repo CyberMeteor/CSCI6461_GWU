@@ -674,23 +674,24 @@ public class CPU {
     private void executeLDX(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
         int IX = effectiveAddress[3];
-        setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        int addressField = effectiveAddress[4];
+        setRegisterValue(RegisterType.MemoryAddressRegister, getMemoryValue(EA));
         switch (IX) {
             case 1:
                 //Set MBR from memory
-                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(addressField));
                 //Load MBR into index register
                 x1.setRegisterValue(mbr.getRegisterValue());
                 break;
             case 2:
                 //Set MBR from memory
-                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(addressField));
                 //Load MBR into index register
                 x2.setRegisterValue(mbr.getRegisterValue());
                 break;
             case 3:
                 //Set MBR from memory
-                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(EA));
+                setRegisterValue(RegisterType.MemoryBufferRegister, getMemoryValue(addressField));
                 //Load MBR into index register
                 x3.setRegisterValue(mbr.getRegisterValue());
                 break;
@@ -751,7 +752,7 @@ public class CPU {
 
         // Unconditional Jump
         // Set the Program Counter (PC) to the specified address
-        setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+        setRegisterValue(RegisterType.ProgramCounter, getRegisterValue(RegisterType.MemoryAddressRegister));
     }
 
     private void executeJSR(int[] effectiveAddress) {
@@ -809,7 +810,10 @@ public class CPU {
 
         int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
         int x = RValue + EA;
-        int[] result = intToBinaryArray(Integer.toString(x));
+
+        String binaryString = Integer.toBinaryString(x);
+        binaryString = String.format("%16s", binaryString).replace(' ', '0');
+        int[] result = intToBinaryArray(binaryString);
         int[] currentCCValue = cc.getRegisterValue();
 
         if(x > 32767) {
@@ -864,12 +868,7 @@ public class CPU {
             }
         }
     }
-    private String decimalToBinary(String decimalAddress) {
-        if (decimalAddress == null) {
-            decimalAddress = "0";
-        }
-        return new BigInteger(decimalAddress, 10).toString(2);
-    }
+
 
 
     private void executeSIR(int[] effectiveAddress) {
@@ -1081,8 +1080,8 @@ public class CPU {
         } else {
             if (devID == 0) {
                 CompletableFuture<String> future = new CompletableFuture<>();
+                setExecuteInstructions(false); // Pause CPU execution
                 Platform.runLater(() -> {
-                    setExecuteInstructions(false); // Pause CPU execution
                     TextInputDialog dialog = new TextInputDialog();
                     dialog.setTitle("Input Dialog");
                     dialog.setHeaderText("Please type in your input for keyboard.");
@@ -1113,13 +1112,15 @@ public class CPU {
         }
     }
 
+
     private void executeOUT(int[] effectiveAddress) {
         int R = effectiveAddress[2];
-        int devID = binaryArrayToInt(ir.getRegisterValue());
+        String irValue = Arrays.toString(getRegisterValue(RegisterType.InstructionRegister)).replaceAll("[^0-9]", "");
+        int devID = Integer.parseInt(irValue.substring(11), 2);
         ConsoleController consoleController = new ConsoleController();
         if(devID != 0) {
             int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
-            if(devID == 1) {
+             if(devID == 1) {
                 if (RValue < 10) {
                     System.out.println(RValue);
                     consoleController.appendToPrinterTextArea(String.valueOf(RValue));  // Output the RValue to the printer console
