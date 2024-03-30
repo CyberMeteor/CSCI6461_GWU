@@ -112,14 +112,17 @@ public class CPU {
 
     public int binaryToInt(int[] binary) {
         int returnVal;
-        String binaryVal = Arrays.toString(binary);
-        binaryVal = binaryVal.replace("[", "");
-        binaryVal = binaryVal.replace("]", "");
-        binaryVal = binaryVal.replace(",", "");
-        binaryVal = binaryVal.replace(" ", "");
-        returnVal = Integer.parseInt(binaryVal, 2);
+        StringBuilder binaryBuilder = new StringBuilder();
+        for (int i = 1; i < binary.length; i++) {
+            binaryBuilder.append(binary[i]);
+        }
+        returnVal = Integer.parseInt(binaryBuilder.toString(), 2);
+        if (binary[0] == 1) {
+            returnVal = -returnVal;
+        }
         return returnVal;
     }
+
 
     //Converts a binary int value to binary array value specifically for the PC
     public int[] intToBinaryArrayShort(String value) {
@@ -141,19 +144,28 @@ public class CPU {
 
     //Converts a binary int value to binary array value.
     public int[] intToBinaryArray(String value) {
+        boolean negative = false;
+
+        if (value.charAt(0) == '-') {
+            negative = true;
+            value = value.substring(1); // Remove the negative sign
+        }
+
         int[] returnValue = new int[16];
 
         char[] arr = value.toCharArray();
 
+        // Set sign bit
+        returnValue[0] = negative ? 1 : 0;
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 1; i < 16; i++) {
             if (i < 16 - arr.length) {
                 returnValue[i] = 0;
             } else {
                 returnValue[i] = Character.getNumericValue(value.charAt(i - (16 - arr.length)));
             }
-
         }
+
         return returnValue;
     }
 
@@ -164,23 +176,45 @@ public class CPU {
 
     // For MBR
     public int[] octalToBinaryArray(String octal) {
-        int[] ret_val = new int[16];
-        octal = octal.replaceAll("0", "000");
-        octal = octal.replaceAll("1", "001");
-        octal = octal.replaceAll("2", "010");
-        octal = octal.replaceAll("3", "011");
-        octal = octal.replaceAll("4", "100");
-        octal = octal.replaceAll("5", "101");
-        octal = octal.replaceAll("6", "110");
-        octal = octal.replaceAll("7", "111");
-
-        char[] arr = octal.toCharArray();
-
-        for (int i = 0; i < (octal.length() - 2); i++) {
-            ret_val[i] = Character.getNumericValue(octal.charAt(i + 2));
+        // Check if the number is negative
+        boolean negative = false;
+        if (octal.charAt(0) == '-') {
+            negative = true;
+            octal = octal.substring(1); // Remove the negative sign
         }
+
+        // Convert octal to binary
+        StringBuilder binaryBuilder = new StringBuilder();
+        for (int i = 0; i < octal.length(); i++) {
+            int digit = Character.digit(octal.charAt(i), 8);
+            String binaryDigit = String.format("%03d", Integer.parseInt(Integer.toBinaryString(digit)));
+            binaryBuilder.append(binaryDigit);
+        }
+
+        // Truncate or extend the binary string to 16 bits
+        String binary = binaryBuilder.toString();
+        if (binary.length() < 16) {
+            binary = "0".repeat(16 - binary.length()) + binary; // Extend with zeros
+        } else if (binary.length() > 16) {
+            binary = binary.substring(binary.length() - 16); // Truncate
+        }
+
+        // Convert the binary string to an int array
+        int[] ret_val = new int[16];
+        for (int i = 0; i < 16; i++) {
+            ret_val[i] = Character.getNumericValue(binary.charAt(i));
+        }
+
+        // Set sign bit for negative numbers
+        if (negative) {
+            ret_val[0] = 1;
+        }
+
         return ret_val;
     }
+
+
+
 
     // For MAR
     public int[] octalToBinaryArrayShort(String octal) {
@@ -204,11 +238,22 @@ public class CPU {
 
     public int binaryArrayToInt(int[] binaryArray) {
         int value = 0;
-        for (int i = 0; i < binaryArray.length; i++) {
+        boolean isNegative = binaryArray[0] == 1; // Check if the number is negative
+
+        // Convert the remaining bits to integer value, ignoring the sign bit
+        for (int i = 1; i < binaryArray.length; i++) {
             value = (value << 1) + binaryArray[i];
         }
+
+        // Handle negative numbers
+        if (isNegative) {
+            value = -value; // Make the value negative
+        }
+
         return value;
     }
+
+
 
     // Right shift the register by count
     public String rightShift(String bitValue, int count, int ALvalue) {
@@ -435,10 +480,12 @@ public class CPU {
             case "OUT":
                 executeOUT(effectiveAddress);
                 break;
+            case "SETCCE":
+                executeSetCCE(effectiveAddress);
+                break;
             default:
         }
     }
-
 
 
     public int[] computeEffectiveAddr(int[] instruction) {
@@ -610,24 +657,28 @@ public class CPU {
     private void executeSTR(int[] effectiveAddress) {
         int EA = effectiveAddress[0];
         int R = effectiveAddress[2];
+        StringBuilder binaryBuilder = new StringBuilder();
+        for (int i = 0; i < getMemoryValue(EA).length; i++) {
+            binaryBuilder.append(getMemoryValue(EA)[i]);
+        }
         if(GPRList.get(R).getDeviceInput() == 0) {
             setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
             switch (R) {
                 case 0:
                     setRegisterValue(RegisterType.MemoryBufferRegister, gpr0.getRegisterValue());
-                    setMemoryValue(EA, mbr.getRegisterValue());
+                    setMemoryValue(Integer.parseInt(binaryBuilder.toString(),2), mbr.getRegisterValue());
                     break;
                 case 1:
                     setRegisterValue(RegisterType.MemoryBufferRegister, gpr1.getRegisterValue());
-                    setMemoryValue(EA, mbr.getRegisterValue());
+                    setMemoryValue(Integer.parseInt(binaryBuilder.toString(),2), mbr.getRegisterValue());
                     break;
                 case 2:
                     setRegisterValue(RegisterType.MemoryBufferRegister, gpr2.getRegisterValue());
-                    setMemoryValue(EA, mbr.getRegisterValue());
+                    setMemoryValue(Integer.parseInt(binaryBuilder.toString(),2), mbr.getRegisterValue());
                     break;
                 default:
                     setRegisterValue(RegisterType.MemoryBufferRegister, gpr3.getRegisterValue());
-                    setMemoryValue(EA, mbr.getRegisterValue());
+                    setMemoryValue(Integer.parseInt(binaryBuilder.toString(),2), mbr.getRegisterValue());
             }
         }
 
@@ -726,7 +777,11 @@ public class CPU {
         // Check if the E bit cc(3) of the condition code is 0
         if (getRegisterValue(RegisterType.ConditionCode)[3] == 0) {
             // Set the Program Counter (PC) to the specified address
-            setRegisterValue(RegisterType.ProgramCounter, intToBinaryArrayShort(Integer.toBinaryString(EA)));
+            StringBuilder binaryBuilder = new StringBuilder();
+            for (int i = 0; i < getMemoryValue(EA).length; i++) {
+                binaryBuilder.append(getMemoryValue(EA)[i]);
+            }
+            setRegisterValue(RegisterType.ProgramCounter,intToBinaryArrayShort(binaryBuilder.toString()));
         } else {
             // If the E bit is not set, increment the Program Counter (PC) by 1
             incrementPCByOne();
@@ -877,7 +932,10 @@ public class CPU {
         setRegisterValue(RegisterType.MemoryAddressRegister, intToBinaryArrayShort(Integer.toBinaryString(EA)));
 
         int RValue = binaryArrayToInt(GPRList.get(R).getRegisterValue());
-        int immed = binaryArrayToInt(ir.getRegisterValue());
+        int[] irValue = getRegisterValue(RegisterType.InstructionRegister);
+        String addr = Arrays.toString(irValue).replaceAll("[^0-9]", "").substring(11);
+        int immed = Integer.parseInt(addr,2);
+
         int x = RValue - immed;
         int[] result = intToBinaryArray(Integer.toString(x));
         int[] currentCCValue = cc.getRegisterValue();
@@ -886,7 +944,7 @@ public class CPU {
                 currentCCValue[1] = 1;
                 cc.setRegisterValue(currentCCValue);
             }else {
-                if (RValue == 0) {  //if c(r) = 0, loads r1 with –(Immed)
+                if (x == 0) {  //if c(r) = 0, loads r1 with –(Immed)
                     GPRList.get(R).setRegisterValue(result);
                 }
             }
@@ -1123,10 +1181,10 @@ public class CPU {
              if(devID == 1) {
                 if (RValue < 10) {
                     System.out.println(RValue);
-                    consoleController.appendToPrinterTextArea(String.valueOf(RValue));  // Output the RValue to the printer console
+                    //consoleController.appendToPrinterTextArea(String.valueOf(RValue));  // Output the RValue to the printer console
                 } else {
                     System.out.println((char) RValue);
-                    consoleController.appendToPrinterTextArea(String.valueOf((char) RValue));  // Output the RValue to the printer console
+                    //consoleController.appendToPrinterTextArea(String.valueOf((char) RValue));  // Output the RValue to the printer console
                 }
             }
             System.out.println("OUT instruction end");
@@ -1134,6 +1192,19 @@ public class CPU {
         else{
             System.out.println("OUT instruction end without an action");
         }
+    }
+    private void executeSetCCE(int[] effectiveAddress) {
+        //If c(r) = 0, the E bit of the condition code is set to 1, else the E bit of the condition code is set to 0
+        int R = effectiveAddress[2];
+        int[] currentCCValue = cc.getRegisterValue();
+        if(R == 0) {
+            currentCCValue[3] = 1;
+        }
+
+        else {
+            currentCCValue[3] = 0;
+        }
+        cc.setRegisterValue(currentCCValue);
     }
 
     private void incrementPCByOne() {

@@ -9,14 +9,14 @@ import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) {
-//        FileManager fileManager = FileManager.getInstance();
-//        fileManager.readLinesFromFile("input.txt"); //Reading input.txt file of instructions.
+       FileManager fileManager = FileManager.getInstance();
+       fileManager.readLinesFromFile("input.txt"); //Reading input.txt file of instructions.
 
         // old UI(Java.Swing)
 //        SimulatorFrame simulatorFrame = new SimulatorFrame();
 
         // new UI(JavaFX)
-        Application.launch(SimulatorPanel.class, args);
+        //Application.launch(SimulatorPanel.class, args);
     }
 
 }
